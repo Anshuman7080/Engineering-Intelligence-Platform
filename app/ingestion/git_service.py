@@ -1,35 +1,27 @@
+from git import Repo, GitCommandError
 from pathlib import Path
-
-from git import Repo
 
 from app.core.logger import logger
 
 
 class GitService:
 
-    def clone_repository(
-        self,
-        repository_url: str,
-        destination: str
-    ) -> Path:
-
+    def clone_repository(self, repository_url: str, destination: str) -> Path:
         destination_path = Path(destination)
 
         if destination_path.exists():
-            logger.info(
-                f"Repository already exists at {destination_path}"
-            )
+            logger.info(f"Repository already exists: {destination_path}")
             return destination_path
 
-        logger.info(
-            f"Cloning repository: {repository_url}"
-        )
+        try:
+            logger.info(f"Cloning repository: {repository_url}")
 
-        Repo.clone_from(
-            repository_url,
-            destination_path
-        )
+            Repo.clone_from(repository_url, destination_path)
 
-        logger.info("Repository cloned successfully.")
+            logger.info("Repository cloned successfully.")
 
-        return destination_path
+            return destination_path
+
+        except GitCommandError as e:
+            logger.error(f"Failed to clone repository: {e}")
+            raise
