@@ -18,6 +18,8 @@ class Settings(BaseSettings):
     NEO4J_USERNAME: str = ""
     NEO4J_PASSWORD: str = ""
     EMBEDDING_MODEL:str = ""
+    PINECONE_API_KEY: str
+    PINECONE_INDEX_NAME: str
     
 
     model_config = SettingsConfigDict(
