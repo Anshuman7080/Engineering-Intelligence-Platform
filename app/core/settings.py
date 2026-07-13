@@ -20,7 +20,11 @@ class Settings(BaseSettings):
     EMBEDDING_MODEL:str = ""
     PINECONE_API_KEY: str
     PINECONE_INDEX_NAME: str
-    
+    GEMINI_API_KEY:str
+    COHERE_API_KEY:str
+    GEMINI_MODEL:str
+    COHERE_MODEL:str
+    LLM_PROVIDER:str
 
     model_config = SettingsConfigDict(
         env_file=".env",
