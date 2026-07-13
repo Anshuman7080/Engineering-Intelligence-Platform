@@ -21,9 +21,7 @@ class QueryPipeline:
         top_k: int = 5,
     ):
 
-        print("--------------------------------")
-        print("conversation_id received:", conversation_id) 
-
+      
         if not conversation_id:
             conversation_id = (
                 self.conversation_manager.create_conversation()
@@ -71,13 +69,17 @@ class QueryPipeline:
 
         sources = []
 
-        for result in results:
-            source = result["metadata"].get("source")
+        for result in results[:3]:
 
-            if source and source not in sources:
-                sources.append(source)
+            metadata = result["metadata"]
 
-        sources = list(dict.fromkeys(sources))[:3]
+            sources.append(
+                {
+                    "file": metadata.get("source", ""),
+                    "score": round(result["score"], 4),
+                    "snippet": metadata.get("text", "")[:250],
+                }
+            )
 
         return {
             "conversation_id": conversation_id,

@@ -5,7 +5,8 @@ from app.ingestion.chunker import DocumentChunker
 from app.services.embedding_service import EmbeddingService
 from app.services.pinecone_service import PineconeService
 from app.core.logger import logger
-
+from app.ingestion.commit_loader import CommitLoader
+from app.ingestion.pr_loader import PullRequestLoader
 
 class IngestionPipeline:
 
@@ -20,6 +21,10 @@ class IngestionPipeline:
         self.embedding_service = EmbeddingService()
 
         self.pinecone_service = PineconeService()
+        
+        self.commit_loader=CommitLoader()
+
+        self.pr_loader = PullRequestLoader()
 
     def ingest(
     self,
@@ -39,7 +44,23 @@ class IngestionPipeline:
             destination=destination,
         )   
 
-        documents = self.loader.load(repository_path)
+        file_documents = self.loader.load(repository_path)
+
+        commit_documents = self.commit_loader.load(
+            repository_path
+        )
+
+        pr_documents = self.pr_loader.load(
+            repository_url
+        )
+
+        documents = (
+            file_documents
+            + commit_documents
+            + pr_documents
+        )
+
+        
 
         chunks = self.chunker.split_documents(documents)
 
