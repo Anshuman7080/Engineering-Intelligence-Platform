@@ -4,7 +4,8 @@ from app.graph.graph_models import (
     RelationshipType,
 )
 from app.parsing.dependency_resolver import DependencyResolver
-
+from app.parsing.symbol_table_builder import SymbolTableBuilder
+from app.parsing.symbol_resolver import SymbolResolver
 
 class GraphBuilder:
 
@@ -24,6 +25,15 @@ class GraphBuilder:
     ) -> GraphData:
 
         graph = GraphData()
+
+        symbol_table = SymbolTableBuilder().build(
+            parsed_repository,
+            repository_name,
+        )
+
+        self.symbol_resolver = SymbolResolver(
+            symbol_table
+        )
 
         graph.add_node(
             label=NodeType.REPOSITORY.value,
@@ -278,8 +288,7 @@ class GraphBuilder:
 
         for call in file["calls"]:
 
-            
-
+          
             if call["caller_class"]:
 
                 caller_id = (
@@ -301,24 +310,33 @@ class GraphBuilder:
 
                 start_label = NodeType.FUNCTION.value
 
-            # Callee ID
-            # (For now we assume the callee is in the same file.
-            # We'll resolve cross-file calls later using Symbol Resolution.)
-
-            callee_id = (
-                f"{repository_name}:"
-                f"{file['path']}:"
-                f"{call['callee']}"
+            
+            callee_id = self.symbol_resolver.resolve(
+                symbol_name=call["callee"],
+                class_name=call["caller_class"],
             )
 
+          
+            if callee_id is None:
+                continue
+
+           
+            last_part = callee_id.split(":")[-1]
+
+            if "." in last_part:
+                end_label = NodeType.METHOD.value
+            else:
+                end_label = NodeType.FUNCTION.value
+
+            
             graph.add_relationship(
                 start_label=start_label,
                 start_properties={
                     "id": caller_id,
                 },
-                end_label=NodeType.FUNCTION.value,
+                end_label=end_label,
                 end_properties={
                     "id": callee_id,
                 },
                 relationship=RelationshipType.CALLS.value,
-            )
+            ) 
