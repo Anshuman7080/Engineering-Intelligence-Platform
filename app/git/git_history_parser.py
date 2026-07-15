@@ -13,12 +13,12 @@ class GitHistoryParser:
 
         commits = []
 
-        for commit in repository.iter_commits():
+        for commit in repository.iter_commits(max_count=1000):
            
 
             changed_files = []
 
-           
+            
             if not commit.parents:
 
                 changed_files = list(commit.stats.files.keys())

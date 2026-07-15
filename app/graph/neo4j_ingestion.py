@@ -1,7 +1,9 @@
 from collections import defaultdict
+from itertools import islice
 
 from app.graph.graph_data import GraphData
 from app.graph.graph_service import GraphService
+from app.core.logger import logger
 
 
 class Neo4jIngestionService:
@@ -10,41 +12,81 @@ class Neo4jIngestionService:
 
         self.graph_service = GraphService()
 
+        self.batch_size = 1000
+
     def ingest(
         self,
         graph_data: GraphData,
     ):
 
+        logger.info("Inserting nodes...")
         self._insert_nodes(graph_data.nodes)
 
+        logger.info("Inserting relationships...")
         self._insert_relationships(graph_data.relationships)
 
+    def _chunk(
+        self,
+        items,
+    ):
 
-    def _insert_nodes(
-            self,
-            nodes,
-    ) :
+        iterator = iter(items)
 
-        grouped=defaultdict(list)
+        while True:
 
-        for node in nodes:
-
-            grouped[node.label].append(
-                node.properties
+            batch = list(
+                islice(
+                    iterator,
+                    self.batch_size,
+                )
             )
 
-        for label,rows in grouped.items():
-            self._insert_node_batch(
-                label,
-                rows,
-            ) 
+            if not batch:
+                break
 
+            yield batch
 
+    # ---------------------------------------------------------
+    # Nodes
+    # ---------------------------------------------------------
+
+    def _insert_nodes(
+        self,
+        nodes,
+    ):
+
+        grouped = defaultdict(list)
+
+        for node in nodes:
+            grouped[node.label].append(node.properties)
+
+        for label, rows in grouped.items():
+
+            total = len(rows)
+
+            logger.info(
+                f"{label}: {total} nodes"
+            )
+
+            inserted = 0
+
+            for batch in self._chunk(rows):
+
+                self._insert_node_batch(
+                    label,
+                    batch,
+                )
+
+                inserted += len(batch)
+
+                logger.info(
+                    f"{label}: {inserted}/{total}"
+                )
 
     def _insert_node_batch(
-    self,
-    label: str,
-    rows: list[dict],
+        self,
+        label: str,
+        rows: list[dict],
     ):
 
         if not rows:
@@ -67,6 +109,9 @@ class Neo4jIngestionService:
             },
         )
 
+    # ---------------------------------------------------------
+    # Relationships
+    # ---------------------------------------------------------
 
     def _insert_relationships(
         self,
@@ -79,22 +124,36 @@ class Neo4jIngestionService:
 
             grouped[
                 relationship.relationship
-            ].append(
-                relationship
-            )
+            ].append(relationship)
 
         for relation, rows in grouped.items():
 
-            self._insert_relationship_batch(
-                relation,
-                rows,
-            ) 
+            total = len(rows)
+
+            logger.info(
+                f"{relation}: {total} relationships"
+            )
+
+            inserted = 0
+
+            for batch in self._chunk(rows):
+
+                self._insert_relationship_batch(
+                    relation,
+                    batch,
+                )
+
+                inserted += len(batch)
+
+                logger.info(
+                    f"{relation}: {inserted}/{total}"
+                )
 
     def _insert_relationship_batch(
-    self,
-    relationship: str,
-    rows,
-  ):
+        self,
+        relationship: str,
+        rows,
+    ):
 
         if not rows:
             return
@@ -133,3 +192,4 @@ class Neo4jIngestionService:
                 "rows": formatted_rows,
             },
         )
+        

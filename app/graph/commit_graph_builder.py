@@ -70,8 +70,10 @@ class CommitGraphBuilder:
            
             for file in commit["files"]:
 
+                normalized_file = file.replace("\\", "/")
+
                 file_id = (
-                    f"{repository_name}:{file}"
+                    f"{repository_name}:{normalized_file}"
                 )
 
                 graph.add_relationship(
@@ -85,5 +87,4 @@ class CommitGraphBuilder:
                     },
                     relationship=RelationshipType.MODIFIES.value,
                 )
-
         return graph

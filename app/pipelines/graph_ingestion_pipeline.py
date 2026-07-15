@@ -72,6 +72,23 @@ class GraphIngestionPipeline:
 
         self.graph_service.create_constraints()
 
+        modify_count = sum(
+            1
+            for r in graph_data.relationships
+            if r.relationship == "MODIFIES"
+        )
+
+        print(f"MODIFIES relationships: {modify_count}")
+
+        commit_count = sum(
+            1
+            for n in graph_data.nodes
+            if n.label == "Commit"
+        )
+
+        print(f"Commit nodes: {commit_count}")
+
+
         self.ingestion_service.ingest(
             graph_data
         )

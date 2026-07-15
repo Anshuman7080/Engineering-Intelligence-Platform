@@ -84,9 +84,11 @@ class RepositoryParser:
 
         return {
 
-            "path": str(
-                file_path.relative_to(repository_path)
-            ),
+            "path": (
+                file_path
+                .relative_to(repository_path)
+                .as_posix()
+            ),  
 
             "imports": self.import_extractor.extract(tree),
 
