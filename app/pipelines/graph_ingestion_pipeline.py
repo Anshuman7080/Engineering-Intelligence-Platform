@@ -3,6 +3,9 @@ from app.graph.graph_builder import GraphBuilder
 from app.graph.neo4j_ingestion import Neo4jIngestionService
 from app.graph.graph_service import GraphService
 from app.core.logger import logger
+from app.git.git_history_parser import GitHistoryParser
+from app.graph.commit_graph_builder import CommitGraphBuilder
+
 
 
 class GraphIngestionPipeline:
@@ -11,7 +14,9 @@ class GraphIngestionPipeline:
 
         self.repository_parser = RepositoryParser()
 
-        
+        self.git_history_parser = GitHistoryParser()
+
+        self.commit_graph_builder = CommitGraphBuilder()
 
         self.ingestion_service = Neo4jIngestionService()
 
@@ -47,7 +52,22 @@ class GraphIngestionPipeline:
         )
 
         logger.info(
-            "Step 3 : Writing graph to Neo4j..."
+            "step3 : parsing git commits"
+        )
+
+        commits = self.git_history_parser.parse(
+            repository_path
+        )
+
+        commit_graph = self.commit_graph_builder.build(
+            commits=commits,
+            repository_name=repository_name,
+        )
+
+        graph_data.merge(commit_graph)
+
+        logger.info(
+            "Step 4 : Writing graph to Neo4j..."
         )
 
         self.graph_service.create_constraints()
