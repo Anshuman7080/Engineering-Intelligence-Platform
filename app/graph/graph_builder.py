@@ -3,9 +3,19 @@ from app.graph.graph_models import (
     NodeType,
     RelationshipType,
 )
+from app.parsing.dependency_resolver import DependencyResolver
 
 
 class GraphBuilder:
+
+    def __init__(
+    self,
+    repository_root: str,
+    ):
+
+        self.dependency_resolver = DependencyResolver(
+            repository_root
+        )
 
     def build(
         self,
@@ -17,6 +27,7 @@ class GraphBuilder:
 
         graph.add_node(
             label=NodeType.REPOSITORY.value,
+            id=repository_name,
             name=repository_name,
         )
 
@@ -31,21 +42,32 @@ class GraphBuilder:
             self._add_imports(
                 graph,
                 file,
+                repository_name,
+            )
+
+
+            self._add_dependencies(
+                graph,
+                file,
+                repository_name,
             )
 
             self._add_classes(
                 graph,
                 file,
+                repository_name,
             )
 
             self._add_functions(
                 graph,
                 file,
+                repository_name,
             )
 
             self._add_calls(
                 graph,
                 file,
+                repository_name,
             )
 
         return graph
@@ -58,30 +80,75 @@ class GraphBuilder:
         file: dict,
     ):
 
+        file_id = f"{repository_name}:{file['path']}"
+
         graph.add_node(
             label=NodeType.FILE.value,
+            id=file_id,
+            repository=repository_name,
             path=file["path"],
         )
 
         graph.add_relationship(
             start_label=NodeType.REPOSITORY.value,
             start_properties={
-                "name": repository_name,
+                "id": repository_name,
             },
             end_label=NodeType.FILE.value,
             end_properties={
-                "path": file["path"],
+                "id": file_id,
             },
             relationship=RelationshipType.CONTAINS.value,
         )
 
-    
-    
+        
     def _add_imports(
         self,
         graph: GraphData,
         file: dict,
+        repository_name: str,
+         ):
+
+            file_id = f"{repository_name}:{file['path']}"
+
+            for imp in file["imports"]:
+
+                module = imp.get("module")
+
+                if not module:
+                    continue
+
+                module_id = f"{repository_name}:{module}"
+
+                graph.add_node(
+                    label=NodeType.MODULE.value,
+                    id=module_id,
+                    repository=repository_name,
+                    name=module,
+                )
+
+                graph.add_relationship(
+                    start_label=NodeType.FILE.value,
+                    start_properties={
+                        "id": file_id,
+                    },
+                    end_label=NodeType.MODULE.value,
+                    end_properties={
+                        "id": module_id,
+                    },
+                    relationship=RelationshipType.IMPORTS.value,
+                )
+      
+    def _add_dependencies(
+    self,
+    graph: GraphData,
+    file: dict,
+    repository_name: str,
     ):
+
+        source_file_id = (
+            f"{repository_name}:{file['path']}"
+        )
 
         for imp in file["imports"]:
 
@@ -90,96 +157,168 @@ class GraphBuilder:
             if not module:
                 continue
 
-            graph.add_node(
-                label=NodeType.MODULE.value,
-                name=module,
+            dependency = self.dependency_resolver.resolve(
+                module
+            )
+
+            if dependency is None:
+                continue
+
+            target_file_id = (
+                f"{repository_name}:{dependency}"
             )
 
             graph.add_relationship(
                 start_label=NodeType.FILE.value,
                 start_properties={
-                    "path": file["path"],
+                    "id": source_file_id,
                 },
-                end_label=NodeType.MODULE.value,
+                end_label=NodeType.FILE.value,
                 end_properties={
-                    "name": module,
+                    "id": target_file_id,
                 },
-                relationship=RelationshipType.IMPORTS.value,
-            )   
+                relationship=RelationshipType.DEPENDS_ON.value,
+            )
 
     def _add_classes(
-        self,
-        graph: GraphData,
-        file: dict,
+    self,
+    graph: GraphData,
+    file: dict,
+    repository_name: str,
     ):
+
+        file_id = f"{repository_name}:{file['path']}"
 
         for cls in file["classes"]:
 
+            class_id = (
+                f"{repository_name}:"
+                f"{file['path']}:"
+                f"{cls['name']}"
+            )
+
             graph.add_node(
                 label=NodeType.CLASS.value,
+                id=class_id,
+                repository=repository_name,
+                path=file["path"],
                 name=cls["name"],
             )
 
             graph.add_relationship(
                 start_label=NodeType.FILE.value,
                 start_properties={
-                    "path": file["path"],
+                    "id": file_id,
                 },
                 end_label=NodeType.CLASS.value,
                 end_properties={
-                    "name": cls["name"],
+                    "id": class_id,
                 },
                 relationship=RelationshipType.CONTAINS.value,
-            )      
+            ) 
 
     def _add_functions(
-        self,
-        graph: GraphData,
-        file: dict,
-    ):
+    self,
+    graph: GraphData,
+    file: dict,
+    repository_name: str,
+     ):
+
+        file_id = f"{repository_name}:{file['path']}"
 
         for function in file["functions"]:
 
-            label = (
-                NodeType.METHOD.value
-                if function["is_method"]
-                else NodeType.FUNCTION.value
-            )
+            if function["is_method"]:
+
+                node_label = NodeType.METHOD.value
+
+                node_id = (
+                    f"{repository_name}:"
+                    f"{file['path']}:"
+                    f"{function['class']}."
+                    f"{function['name']}"
+                )
+
+            else:
+
+                node_label = NodeType.FUNCTION.value
+
+                node_id = (
+                    f"{repository_name}:"
+                    f"{file['path']}:"
+                    f"{function['name']}"
+                )
 
             graph.add_node(
-                label=label,
+                label=node_label,
+                id=node_id,
+                repository=repository_name,
+                path=file["path"],
                 name=function["name"],
             )
 
             graph.add_relationship(
                 start_label=NodeType.FILE.value,
                 start_properties={
-                    "path": file["path"],
+                    "id": file_id,
                 },
-                end_label=label,
+                end_label=node_label,
                 end_properties={
-                    "name": function["name"],
+                    "id": node_id,
                 },
                 relationship=RelationshipType.DECLARES.value,
-            )    
-
+            )
 
     def _add_calls(
-        self,
-        graph: GraphData,
-        file: dict,
+    self,
+    graph: GraphData,
+    file: dict,
+    repository_name: str,
     ):
 
         for call in file["calls"]:
 
+            
+
+            if call["caller_class"]:
+
+                caller_id = (
+                    f"{repository_name}:"
+                    f"{file['path']}:"
+                    f"{call['caller_class']}."
+                    f"{call['caller']}"
+                )
+
+                start_label = NodeType.METHOD.value
+
+            else:
+
+                caller_id = (
+                    f"{repository_name}:"
+                    f"{file['path']}:"
+                    f"{call['caller']}"
+                )
+
+                start_label = NodeType.FUNCTION.value
+
+            # Callee ID
+            # (For now we assume the callee is in the same file.
+            # We'll resolve cross-file calls later using Symbol Resolution.)
+
+            callee_id = (
+                f"{repository_name}:"
+                f"{file['path']}:"
+                f"{call['callee']}"
+            )
+
             graph.add_relationship(
-                start_label=NodeType.FUNCTION.value,
+                start_label=start_label,
                 start_properties={
-                    "name": call["caller"],
+                    "id": caller_id,
                 },
                 end_label=NodeType.FUNCTION.value,
                 end_properties={
-                    "name": call["callee"],
+                    "id": callee_id,
                 },
                 relationship=RelationshipType.CALLS.value,
-            )               
+            )

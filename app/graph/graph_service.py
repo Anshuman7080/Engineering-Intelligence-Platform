@@ -52,6 +52,27 @@ class GraphService:
                 parameters or {},
             )
 
+    def create_constraints(self):
+
+        labels = [
+            "Repository",
+            "File",
+            "Module",
+            "Class",
+            "Function",
+            "Method",
+        ]
+
+        for label in labels:
+
+            query = f"""
+            CREATE CONSTRAINT IF NOT EXISTS
+            FOR (n:{label})
+            REQUIRE n.id IS UNIQUE
+            """
+
+            self.execute_write(query)
+
     def clear_database(self):
 
         logger.warning("Clearing Neo4j database.")

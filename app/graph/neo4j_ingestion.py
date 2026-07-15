@@ -42,27 +42,22 @@ class Neo4jIngestionService:
 
 
     def _insert_node_batch(
-        self,
-        label: str,
-        rows: list[dict],
+    self,
+    label: str,
+    rows: list[dict],
     ):
 
         if not rows:
             return
 
-        keys = list(rows[0].keys())
-
-        merge_keys = ", ".join(
-            f"{k}: row.{k}"
-            for k in keys
-        )
-
         query = f"""
         UNWIND $rows AS row
 
         MERGE (n:{label} {{
-            {merge_keys}
+            id: row.id
         }})
+
+        SET n += row
         """
 
         self.graph_service.execute_write(
@@ -96,10 +91,10 @@ class Neo4jIngestionService:
             ) 
 
     def _insert_relationship_batch(
-        self,
-        relationship: str,
-        rows,
-    ):
+    self,
+    relationship: str,
+    rows,
+  ):
 
         if not rows:
             return
@@ -113,34 +108,21 @@ class Neo4jIngestionService:
 
             formatted_rows.append(
                 {
-                    "start": row.start_properties,
-                    "end": row.end_properties,
+                    "start_id": row.start_properties["id"],
+                    "end_id": row.end_properties["id"],
                 }
             )
-
-        start_keys = rows[0].start_properties.keys()
-        end_keys = rows[0].end_properties.keys()
-
-        start_match = " AND ".join(
-            f"a.{k}=row.start.{k}"
-            for k in start_keys
-        )
-
-        end_match = " AND ".join(
-            f"b.{k}=row.end.{k}"
-            for k in end_keys
-        )
 
         query = f"""
         UNWIND $rows AS row
 
-        MATCH (a:{start_label})
+        MATCH (a:{start_label} {{
+            id: row.start_id
+        }})
 
-        WHERE {start_match}
-
-        MATCH (b:{end_label})
-
-        WHERE {end_match}
+        MATCH (b:{end_label} {{
+            id: row.end_id
+        }})
 
         MERGE (a)-[:{relationship}]->(b)
         """
@@ -150,4 +132,4 @@ class Neo4jIngestionService:
             {
                 "rows": formatted_rows,
             },
-        )           
+        )

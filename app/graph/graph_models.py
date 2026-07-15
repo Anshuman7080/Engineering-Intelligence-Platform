@@ -17,6 +17,11 @@ class NodeType(str, Enum):
 
     MODULE = "Module"
 
+    COMMIT="Commit"
+
+    PULLREQUEST="PullRequest"
+
+    ISSUE="Issue"
 
 class RelationshipType(str, Enum):
 
@@ -29,3 +34,11 @@ class RelationshipType(str, Enum):
     CALLS = "CALLS"
 
     DEPENDS_ON = "DEPENDS_ON"
+
+    MODIFIES="MODIFIES"
+
+    FIXES = "FIXES"
+
+    BELONGS_TO="BELONGS_TO"
+
+    CREATED_BY="CREATED_BY"
