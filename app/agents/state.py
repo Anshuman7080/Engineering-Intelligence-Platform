@@ -5,6 +5,8 @@ from app.agents.planning_models import ExecutionPlan
 
 class AgentState(TypedDict):
 
+    repository_name: str
+
     question: str
 
     execution_plan: ExecutionPlan | None

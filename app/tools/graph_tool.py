@@ -18,7 +18,7 @@ class GraphTool:
         if query_type == GraphQueryType.FIND_SYMBOL:
 
             results= self.query_service.find_symbol(
-                kwargs["name"]
+                kwargs["symbol_name"]
             )
 
             return ToolResponse(

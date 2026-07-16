@@ -5,6 +5,19 @@ Your task is NOT to answer the question.
 
 Your task is ONLY to generate an execution plan.
 
+
+The execution plan may contain one or more steps.
+
+Use as many steps as necessary.
+
+If multiple tools are required,
+return them in the correct execution order.
+
+Do NOT answer the question.
+
+Only produce the plan.
+
+
 Available Tools
 
 GRAPH
