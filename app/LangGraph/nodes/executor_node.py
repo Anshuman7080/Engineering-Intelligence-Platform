@@ -23,7 +23,6 @@ async def executor_node(
 
         tool = registry.get_tool(step.tool)
 
-
         if step.tool == ToolType.GRAPH:
 
             result = tool.execute(
@@ -47,5 +46,11 @@ async def executor_node(
         tool_results.append(result)
 
     state["tool_results"] = tool_results
+
+    
+    state["has_results"] = any(
+        len(response.results) > 0
+        for response in tool_results
+    )
 
     return state

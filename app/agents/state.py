@@ -14,3 +14,5 @@ class AgentState(TypedDict):
     tool_results: list[ToolResponse]
 
     final_report: str
+
+    has_results: bool
