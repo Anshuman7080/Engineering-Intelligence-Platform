@@ -9,7 +9,9 @@ async def planner_node(
 ) -> AgentState:
 
     plan = await planner.plan(
-        state["question"]
+        question=state["question"],
+        previous_plan=state["execution_plan"],
+        verification=state["verification"],
     )
 
     state["execution_plan"] = plan

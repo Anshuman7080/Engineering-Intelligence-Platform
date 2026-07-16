@@ -4,6 +4,9 @@ from app.prompts.planner_prompt import PlannerPromptBuilder
 
 from app.parsing.planner_output_parser import PlannerOutputParser
 
+from app.agents.planning_models import ExecutionPlan
+from app.agents.verification_models import VerificationResult
+
 
 class Planner:
 
@@ -12,13 +15,17 @@ class Planner:
         self.llm = LLMService()
 
     async def plan(
-       self,
-    question: str,
+        self,
+        question: str,
+        previous_plan: ExecutionPlan | None = None,
+        verification: VerificationResult | None = None,
     ):
 
         system_prompt, user_prompt = (
             PlannerPromptBuilder.build(
-                question
+                question=question,
+                previous_plan=previous_plan,
+                verification=verification,
             )
         )
 
@@ -29,4 +36,4 @@ class Planner:
 
         return PlannerOutputParser.parse(
             response
-        )    
+        )

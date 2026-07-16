@@ -63,19 +63,68 @@ Output Schema
 }
 """.strip()
 
-
 class PlannerPromptBuilder:
 
     @staticmethod
-    def build(question: str):
+    def build(
+        question: str,
+        previous_plan=None,
+        verification=None,
+    ):
+
+        if (
+            previous_plan is None
+            or verification is None
+        ):
+
+            user_prompt = f"""
+                Question
+
+                {question}
+
+                Execution Plan:
+                """.strip()
+
+            return (
+                PLANNER_SYSTEM_PROMPT,
+                user_prompt,
+            )
 
         user_prompt = f"""
-            Question
+Question
 
-            {question}
+{question}
 
-            Execution Plan:
-            """.strip()
+{"=" * 80}
+
+Previous Execution Plan
+
+{previous_plan.model_dump_json(indent=2)}
+
+{"=" * 80}
+
+Verification Feedback
+
+Reasoning
+
+{verification.reasoning}
+
+Confidence
+
+{verification.confidence}
+
+Missing Information
+
+{verification.missing_information}
+
+{"=" * 80}
+
+The previous investigation was not sufficient.
+
+Generate a better execution plan.
+
+Execution Plan:
+""".strip()
 
         return (
             PLANNER_SYSTEM_PROMPT,

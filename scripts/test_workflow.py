@@ -11,6 +11,8 @@ async def main():
             "question": "who calls anshuman()",
             "execution_plan": None,
             "tool_results": [],
+            "verification": None,
+            "reflection_count": 0,
             "final_report": "",
         }
     )
@@ -28,7 +30,22 @@ async def main():
     print()
     print()
 
-    print(result["final_report"])
+    print("verification  result",result["verification"])
+
+
+    print()
+    print()
+    print()
+
+
+    print("Reflection count is",result["reflection_count"])
+
+
+    print()
+    print()
+    print()
+
+    print("final result is----->",result["final_report"])
 
 
 asyncio.run(main())

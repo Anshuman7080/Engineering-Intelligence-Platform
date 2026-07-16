@@ -2,6 +2,9 @@ from typing import TypedDict
 
 from app.tools.tool_response import ToolResponse
 from app.agents.planning_models import ExecutionPlan
+from app.agents.verification_models import (
+    VerificationResult,
+)
 
 class AgentState(TypedDict):
 
@@ -13,6 +16,10 @@ class AgentState(TypedDict):
 
     tool_results: list[ToolResponse]
 
+    verification: VerificationResult | None
+
+    reflection_count: int
+
     final_report: str
 
-    has_results: bool
+    

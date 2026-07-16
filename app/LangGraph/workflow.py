@@ -5,7 +5,7 @@ from app.agents.state import AgentState
 from app.LangGraph.nodes.planner_node import planner_node
 from app.LangGraph.nodes.executor_node import executor_node
 from app.LangGraph.nodes.report_node import report_node
-from app.LangGraph.nodes.fallback_node import fallback_node
+
 from app.agents.router import route_after_execution
 
 builder = StateGraph(AgentState)

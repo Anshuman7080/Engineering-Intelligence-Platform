@@ -16,6 +16,7 @@ async def report_node(
     report=await generator.generate(
         question=state["question"],
         evidence=evidence,
+        verification=state["verification"],
     )
 
     state["final_report"]=report

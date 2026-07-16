@@ -17,12 +17,14 @@ class ReportGenerator:
             self,
             question:str,
             evidence:str,
+            verification,
     ):
         
         system_prompt,user_prompt=(
             ReportPromptBuilder.build(
                 question,
-                evidence
+                evidence,
+                verification
             )
         )
 
