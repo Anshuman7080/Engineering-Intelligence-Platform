@@ -22,4 +22,8 @@ class AgentState(TypedDict):
 
     final_report: str
 
+    history: list[dict]
+
+    conversation_id: str
+
     

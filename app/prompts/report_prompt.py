@@ -6,7 +6,8 @@ That decision has already been made by the verifier.
 
 Your job is to generate the final response using:
 
-- the user's question
+- the conversation history
+- the user's current question
 - the verification result
 - the collected evidence
 
@@ -16,17 +17,21 @@ Rules
 
 2. Use ONLY the provided evidence.
 
-3. Never contradict the verification decision.
+3. Use the conversation history only to understand the user's intent and references.
 
-4. If the decision is "answer", produce the best possible answer using the evidence.
+4. Never use conversation history as factual evidence.
 
-5. If the decision is "stop", clearly explain that the repository does not contain enough verified evidence to answer the question.
+5. Never contradict the verification decision.
 
-6. Mention filenames whenever possible.
+6. If the decision is "answer", produce the best possible answer using the evidence.
 
-7. If multiple files contribute, mention all of them.
+7. If the decision is "stop", clearly explain that the repository does not contain enough verified evidence to answer the question.
 
-8. Keep the response concise but complete.
+8. Mention filenames whenever possible.
+
+9. If multiple files contribute, mention all of them.
+
+10. Keep the response concise but complete.
 """.strip()
 
 
@@ -37,9 +42,24 @@ class ReportPromptBuilder:
         question: str,
         evidence: str,
         verification,
+        history: list[dict],
     ):
 
+        history_text = ""
+
+        for message in history:
+            history_text += (
+                f'{message["role"].capitalize()}: '
+                f'{message["content"]}\n'
+            )
+
         user_prompt = f"""
+Conversation History
+
+{history_text}
+
+{"=" * 80}
+
 Question
 
 {question}

@@ -1,24 +1,28 @@
 from app.agents.state import AgentState
+
 from app.agents.report_generator import ReportGenerator
 
 from app.tools.evidence_formatter import EvidenceFormatter
 
-generator=ReportGenerator()
+
+generator = ReportGenerator()
+
 
 async def report_node(
-        state:AgentState,
+    state: AgentState,
 ):
-    
-    evidence=EvidenceFormatter.format(
+
+    evidence = EvidenceFormatter.format(
         state["tool_results"]
     )
 
-    report=await generator.generate(
+    report = await generator.generate(
         question=state["question"],
         evidence=evidence,
         verification=state["verification"],
+        history=state["history"],
     )
 
-    state["final_report"]=report
+    state["final_report"] = report
 
     return state
