@@ -1,19 +1,22 @@
-import uuid
-
-from app.conversation.memory import ConverstaionMemory
+from app.conversation.repository import ConversationRepository
 
 
 class ConversationManager:
 
     def __init__(self):
 
-        self.memory = ConverstaionMemory()
+        self.repository = ConversationRepository()
 
-    def create_conversation(self):
+    def create_conversation(
+        self,
+        repository_name: str,
+        title: str,
+    ) -> str:
 
-        conversation_id = str(uuid.uuid4())
-
-        return conversation_id
+        return self.repository.create_conversation(
+            repository_name=repository_name,
+            title=title,
+        )
 
     def add_user_message(
         self,
@@ -21,7 +24,7 @@ class ConversationManager:
         message: str,
     ):
 
-        self.memory.add_message(
+        self.repository.add_message(
             conversation_id=conversation_id,
             role="user",
             content=message,
@@ -33,7 +36,7 @@ class ConversationManager:
         message: str,
     ):
 
-        self.memory.add_message(
+        self.repository.add_message(
             conversation_id=conversation_id,
             role="assistant",
             content=message,
@@ -44,11 +47,24 @@ class ConversationManager:
         conversation_id: str,
     ):
 
-        return self.memory.get_history(conversation_id)
+        return self.repository.get_history(
+            conversation_id
+        )
 
-    def clear(
+    def list_conversations(
+        self,
+        repository_name: str,
+    ):
+
+        return self.repository.list_conversations(
+            repository_name
+        )
+
+    def delete_conversation(
         self,
         conversation_id: str,
     ):
 
-        self.memory.clear(conversation_id)
+        self.repository.delete_conversation(
+            conversation_id
+        )

@@ -1,82 +1,25 @@
-from langgraph.graph import StateGraph
-from langgraph.graph import START, END
-
 from app.agents.state import AgentState
+from app.agents.verification_models import VerificationDecision
 
-from app.LangGraph.nodes.planner_node import planner_node
-from app.LangGraph.nodes.executor_node import executor_node
-from app.LangGraph.nodes.verification_node import verification_node
-from app.LangGraph.nodes.reflection_node import reflection_node
-from app.LangGraph.nodes.report_node import report_node
-
-from app.agents.router import route_after_verification
+MAX_REFLECTIONS = 2
 
 
-builder = StateGraph(AgentState)
+def route_after_verification(
+    state: AgentState,
+):
 
+    verification = state["verification"]
 
-builder.add_node(
-    "planner",
-    planner_node,
-)
+    if verification is None:
+        return "stop"
 
-builder.add_node(
-    "executor",
-    executor_node,
-)
+    if verification.decision == VerificationDecision.ANSWER:
+        return "report"
 
-builder.add_node(
-    "verification",
-    verification_node,
-)
+    if verification.decision == VerificationDecision.STOP:
+        return "stop"
 
-builder.add_node(
-    "reflection",
-    reflection_node,
-)
+    if state["reflection_count"] >= MAX_REFLECTIONS:
+        return "stop"
 
-builder.add_node(
-    "report",
-    report_node,
-)
-
-
-builder.add_edge(
-    START,
-    "planner",
-)
-
-builder.add_edge(
-    "planner",
-    "executor",
-)
-
-builder.add_edge(
-    "executor",
-    "verification",
-)
-
-
-builder.add_conditional_edges(
-    "verification",
-    route_after_verification,
-    {
-        "report": "report",
-        "reflection": "reflection",
-        "stop": "report",
-    },
-)
-
-
-builder.add_edge(
-    "reflection",
-    "planner",
-)
-
-builder.add_edge(
-    "report",
-    END,
-)
-
-
-workflow = builder.compile()
+    return "reflection"

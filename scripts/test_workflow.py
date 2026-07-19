@@ -8,7 +8,7 @@ async def main():
     result = await workflow.ainvoke(
         {
             "repository_name":"langchain.git",
-            "question": "who calls anshuman()",
+            "question": "who calls invoke",
             "execution_plan": None,
             "tool_results": [],
             "verification": None,

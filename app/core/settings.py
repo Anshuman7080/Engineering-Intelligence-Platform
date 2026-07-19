@@ -25,6 +25,7 @@ class Settings(BaseSettings):
     GEMINI_MODEL:str
     COHERE_MODEL:str
     LLM_PROVIDER:str
+    DATABASE_URL: str
 
     model_config = SettingsConfigDict(
         env_file=".env",
