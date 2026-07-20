@@ -24,5 +24,16 @@ async def report_node(
     )
 
     state["final_report"] = report
+    trace=state["trace_manager"]
+
+    trace.add(
+
+        node="Reporter",
+
+        title="Final Report",
+
+        data=report,
+
+    )
 
     return state

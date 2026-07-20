@@ -16,4 +16,12 @@ async def planner_node(
 
     state["execution_plan"] = plan
 
+    trace=state["trace_manager"]
+
+    trace.add(
+        node="Planner",
+        title="Execution Plan",
+        data=plan.model_dump()
+    )
+
     return state

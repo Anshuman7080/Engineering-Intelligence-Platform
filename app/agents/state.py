@@ -1,4 +1,5 @@
-from typing import TypedDict
+from typing import TypedDict,Any
+
 
 from app.tools.tool_response import ToolResponse
 from app.agents.planning_models import ExecutionPlan
@@ -25,5 +26,7 @@ class AgentState(TypedDict):
     history: list[dict]
 
     conversation_id: str
+
+    trace_manager: Any
 
     

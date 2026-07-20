@@ -18,4 +18,15 @@ async def verification_node(
 
     state["verification"] = verification
 
+    trace=state["trace_manager"]
+    trace.add(
+
+        node="Verifier",
+
+        title="Verification",
+
+        data=verification.model_dump(),
+
+    )
+
     return state

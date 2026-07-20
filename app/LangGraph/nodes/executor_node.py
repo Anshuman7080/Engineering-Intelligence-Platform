@@ -24,7 +24,19 @@ async def executor_node(
     print(execution_plan.model_dump_json(indent=2))
     print("=" * 80)
 
+    trace=state["trace_manager"]
+
     for step in execution_plan.steps:
+
+        trace.add(
+            node="Executor",
+            title="Executing Tool",
+            data={
+                "tool":step.tool,
+                "action":step.action,
+                "arguments":step.arguments,
+            }
+        )
 
         tool = registry.get_tool(step.tool)
 
@@ -49,6 +61,16 @@ async def executor_node(
             )
 
         tool_results.append(result)
+
+        trace.add(
+
+            node="Executor",
+
+            title="Tool Result",
+
+            data=result.model_dump(),
+
+        ) 
 
     state["tool_results"] = tool_results
 

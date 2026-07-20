@@ -1,7 +1,8 @@
 from app.LangGraph.workflow import workflow
 
 from app.conversation.conversation_manager import ConversationManager
-
+from uuid import uuid4
+from app.tracing.trace_manager import TraceManager
 
 class WorkflowService:
 
@@ -36,6 +37,10 @@ class WorkflowService:
             )
         )
 
+        trace_id=str(uuid4())
+
+        trace_manager=TraceManager()
+
         state = {
 
             "question": question,
@@ -57,11 +62,16 @@ class WorkflowService:
             "has_results": False,
 
             "final_report": "",
+
+            "trace_manager": trace_manager,
         }
 
+      
         result = await workflow.ainvoke(
             state
         )
+
+        trace_manager.save(trace_id)
 
         self.conversation_manager.add_assistant_message(
             conversation_id,
