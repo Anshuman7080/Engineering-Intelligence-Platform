@@ -19,6 +19,11 @@ async def executor_node(
 
     tool_results = []
 
+    print("=" * 80)
+    print("Execution Plan")
+    print(execution_plan.model_dump_json(indent=2))
+    print("=" * 80)
+
     for step in execution_plan.steps:
 
         tool = registry.get_tool(step.tool)

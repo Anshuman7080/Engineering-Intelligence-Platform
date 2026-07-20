@@ -53,31 +53,14 @@ class ConversationRepository:
         conversation_id: str,
     ) -> list[dict]:
 
-        with SessionLocal() as session:
-
-            conversation = session.execute(
-                select(Conversation)
-                .options(selectinload(Conversation.messages))
-                .where(
-                    Conversation.id == conversation_id
-                )
-            ).scalar_one_or_none()
-
-            if conversation is None:
-                return []
-
-            return [
-                {
-                    "role": message.role,
-                    "content": message.content,
-                }
-                for message in conversation.messages
-            ]
+        return self.get_conversation_messages(
+            conversation_id
+        )
 
     def list_conversations(
-        self,
-        repository_name: str,
-    ):
+    self,
+    repository_name: str,
+    ) -> list[dict]:
 
         with SessionLocal() as session:
 
@@ -91,7 +74,16 @@ class ConversationRepository:
                 )
             ).scalars().all()
 
-            return conversations
+            return [
+                {
+                    "id": conversation.id,
+                    "title": conversation.title,
+                    "repository_name": conversation.repository_name,
+                    "created_at": conversation.created_at,
+                    "updated_at": conversation.updated_at,
+                }
+                for conversation in conversations
+            ]
 
     def delete_conversation(
         self,
@@ -109,3 +101,45 @@ class ConversationRepository:
 
                 session.delete(conversation)
                 session.commit()
+
+    def get_conversation(
+        self,
+        conversation_id: str,
+    ):
+
+        with SessionLocal() as session:
+
+            return session.get(
+                Conversation,
+                conversation_id,
+            )
+
+    def get_conversation_messages(
+        self,
+        conversation_id: str,
+    ) -> list[dict]:
+
+        with SessionLocal() as session:
+
+            conversation = session.execute(
+                select(Conversation)
+                .options(
+                    selectinload(
+                        Conversation.messages
+                    )
+                )
+                .where(
+                    Conversation.id == conversation_id
+                )
+            ).scalar_one_or_none()
+
+            if conversation is None:
+                return []
+
+            return [
+                {
+                    "role": message.role,
+                    "content": message.content,
+                }
+                for message in conversation.messages
+            ]

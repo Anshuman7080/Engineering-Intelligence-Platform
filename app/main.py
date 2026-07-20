@@ -5,8 +5,13 @@ from app.core.logger import logger
 
 from app.api.routes.health import router as health_router
 from app.api.routes.ingestion import router as ingestion_router
-from app.api.routes.query import router as query_router
+from app.database.init_db import init_db
+from app.api.routes.chat import (
+    router as chat_router,
+)
 
+
+init_db()
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -31,10 +36,11 @@ app.include_router(
 )
 
 app.include_router(
-    query_router,
-    prefix="/query",
-    tags=["Query"],
+    chat_router,
+    prefix="/chat",
+    tags=["Chat"],
 )
+
 
 @app.get("/")
 async def root():

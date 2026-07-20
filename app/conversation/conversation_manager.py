@@ -68,3 +68,12 @@ class ConversationManager:
         self.repository.delete_conversation(
             conversation_id
         )
+
+
+    def get_conversation(
+        self,
+        conversation_id: str,
+    ):
+        return self.repository.get_conversation(
+            conversation_id
+        )    

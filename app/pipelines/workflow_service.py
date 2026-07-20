@@ -1,6 +1,6 @@
 from app.LangGraph.workflow import workflow
 
-from app.conversation.manager import ConversationManager
+from app.conversation.conversation_manager import ConversationManager
 
 
 class WorkflowService:
@@ -16,7 +16,7 @@ class WorkflowService:
         conversation_id: str | None = None,
     ):
 
-        if conversation_id is None:
+        if not conversation_id:
 
             conversation_id = (
                 self.conversation_manager.create_conversation(
