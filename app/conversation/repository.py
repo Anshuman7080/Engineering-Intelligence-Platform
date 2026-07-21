@@ -103,16 +103,27 @@ class ConversationRepository:
                 session.commit()
 
     def get_conversation(
-        self,
-        conversation_id: str,
-    ):
+    self,
+    conversation_id: str,
+    ) -> dict | None:
 
         with SessionLocal() as session:
 
-            return session.get(
+            conversation = session.get(
                 Conversation,
                 conversation_id,
             )
+
+            if conversation is None:
+                return None
+
+            return {
+                "id": conversation.id,
+                "repository_name": conversation.repository_name,
+                "title": conversation.title,
+                "created_at": conversation.created_at,
+                "updated_at": conversation.updated_at,
+            }
 
     def get_conversation_messages(
         self,

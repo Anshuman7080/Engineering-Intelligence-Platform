@@ -26,6 +26,7 @@ class Settings(BaseSettings):
     COHERE_MODEL:str
     LLM_PROVIDER:str
     DATABASE_URL: str
+    COHERE_EMBEDDING_MODEL:str
 
     model_config = SettingsConfigDict(
         env_file=".env",

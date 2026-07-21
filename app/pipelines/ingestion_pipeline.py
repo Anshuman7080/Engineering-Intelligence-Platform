@@ -67,6 +67,7 @@ class IngestionPipeline:
         embeddings = self.embedding_service.embed_documents(
             chunks
         )
+       
 
         self.pinecone_service.upsert_documents(
             documents=chunks,
@@ -78,6 +79,7 @@ class IngestionPipeline:
         "repository": repository_name,
         "documents": len(documents),
         "chunks": len(chunks),
+        "repository_path": repository_path,
         "embeddings": len(embeddings),
         }
         

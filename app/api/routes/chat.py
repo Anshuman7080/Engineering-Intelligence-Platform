@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-
+from fastapi import HTTPException
 from app.api.schemas.chat import (
     ChatRequest,
     ChatResponse,
@@ -51,9 +51,9 @@ async def list_conversations(
 
     return [
         ConversationItem(
-            id=c.id,
-            title=c.title,
-            updated_at=c.updated_at.isoformat(),
+            id=c["id"],
+            title=c["title"],
+            updated_at=c["updated_at"].isoformat(),
         )
         for c in conversations
     ]
@@ -64,21 +64,27 @@ async def list_conversations(
 )
 
 async def get_conversation(
-    conversation_id:str,
+    conversation_id: str,
 ):
-    
-    conversation=conversation_manager.get_conversation(
+
+    conversation = conversation_manager.get_conversation(
         conversation_id
     )
 
-    history=conversation_manager.get_history(
+    if conversation is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Conversation not found",
+        )
+
+    history = conversation_manager.get_history(
         conversation_id
     )
 
     return ConversationResponse(
-        id=conversation.id,
-        repository_name=conversation.repository_name,
-        title=conversation.title,
+        id=conversation["id"],
+        repository_name=conversation["repository_name"],
+        title=conversation["title"],
         messages=[
             ChatMessage(**message)
             for message in history
