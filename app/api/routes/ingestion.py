@@ -2,7 +2,7 @@ from fastapi import APIRouter,Depends
 
 from app.api.schemas.ingestion import IngestionRequest
 from app.pipelines.ingestion_pipeline import IngestionPipeline
-from app.api.dependencies import get_ingestion_service
+from app.api.dependencies.ingestion import get_ingestion_service
 from app.pipelines.ingestion_service import IngestionService
 
 router = APIRouter()

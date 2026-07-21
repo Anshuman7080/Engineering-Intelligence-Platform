@@ -1,14 +1,15 @@
-from app.pipelines.ingestion_pipeline import IngestionPipeline
+from app.pipelines.ingestion_service import IngestionService
 
 
 def main():
 
-    pipeline = IngestionPipeline()
+    service = IngestionService()
 
-    result = pipeline.ingest(
-        "https://github.com/langchain-ai/langchain.git"
+    result = service.ingest(
+        repository_url="https://github.com/langchain-ai/langchain"
     )
 
+    print("\n========== INGESTION RESULT ==========\n")
     print(result)
 
 

@@ -27,6 +27,9 @@ class Settings(BaseSettings):
     LLM_PROVIDER:str
     DATABASE_URL: str
     COHERE_EMBEDDING_MODEL:str
+    JWT_SECRET:str
+    JWT_ALGORITHM:str="HS256"
+    JWT_EXPIRE_MINUTES:int=60
 
     model_config = SettingsConfigDict(
         env_file=".env",

@@ -9,6 +9,10 @@ from app.database.init_db import init_db
 from app.api.routes.chat import (
     router as chat_router,
 )
+from app.api.routes.auth import (
+    router as auth_router
+)
+
 
 
 init_db()
@@ -39,6 +43,12 @@ app.include_router(
     chat_router,
     prefix="/chat",
     tags=["Chat"],
+)
+
+app.include_router(
+    auth_router,
+    prefix="/auth",
+    tags=["Authentication"],
 )
 
 
