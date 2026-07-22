@@ -19,7 +19,7 @@ class SymbolTableBuilder:
                 if function["is_method"]:
 
                     node_id = (
-                        f"{user_id}"
+                        f"{user_id}:"
                         f"{repository_name}:"
                         f"{file['path']}:"
                         f"{function['class']}."

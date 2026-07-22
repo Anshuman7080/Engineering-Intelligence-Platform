@@ -92,22 +92,4 @@ class RepositoryService:
             repository_name,
         ) 
     
-    def delete(
-        self,
-        repository_id: str,
-    ):
-
-        repository = self.repository_repository.get(
-            repository_id
-        )
-
-        if repository is None:
-
-            raise HTTPException(
-                status_code=404,
-                detail="Repository not found.",
-            )
-
-        self.cleanup_service.delete_repository(
-            repository_id
-        )
+    

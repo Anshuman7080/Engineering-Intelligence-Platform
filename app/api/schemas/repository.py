@@ -18,4 +18,4 @@ class RepositoryResponse(BaseModel):
 
     created_at: datetime
 
-    last_ingested: datetime
+    

@@ -43,7 +43,7 @@ class PineconeService:
         ):
 
             vector = {
-                "id": f"{user_id}_{repository_name}",
+                "id": f"{user_id}_{repository_name}_{index}",
                 "values": embedding,
                 "metadata": {
                     "user_id":user_id,
@@ -120,9 +120,9 @@ class PineconeService:
     repository_name: str,
     ):
 
-        namespace = f"{user_id}:{repository_name}"
-
         self.index.delete(
-            delete_all=True,
-            namespace=namespace,
-        )
+        filter={
+            "user_id": {"$eq": user_id},
+            "repository": {"$eq": repository_name},
+        }
+    )

@@ -10,6 +10,9 @@ from app.llm.exceptions import (
     RateLimitError,
 )
 
+from fastapi.concurrency import run_in_threadpool
+
+
 
 class CohereProvider(BaseLLMProvider):
 
@@ -28,15 +31,24 @@ class CohereProvider(BaseLLMProvider):
         logger.info("Sending request to Cohere.")
 
         try:
-    
-            response = self.client.chat(
+
+            response = await run_in_threadpool(
+                self.client.chat,
                 model=settings.COHERE_MODEL,
                 messages=[
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_prompt},
                 ],
                 temperature=temperature,
-            )
+            )     
+            # response = self.client.chat(
+            #     model=settings.COHERE_MODEL,
+            #     messages=[
+            #         {"role": "system", "content": system_prompt},
+            #         {"role": "user", "content": user_prompt},
+            #     ],
+            #     temperature=temperature,
+            # )
 
             print("response of cohere",response)
             if not response.message or not response.message.content:

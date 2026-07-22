@@ -10,9 +10,9 @@ class Settings(BaseSettings):
 
     DEBUG: bool
 
-    GEMINI_API_KEY: str = ""
+    
     GROQ_API_KEY: str = ""
-    COHERE_API_KEY: str = ""
+    
 
     NEO4J_URI: str = ""
     NEO4J_USERNAME: str = ""

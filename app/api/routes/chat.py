@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter,Depends
 from fastapi import HTTPException
 from app.api.schemas.chat import (
     ChatRequest,
@@ -10,6 +10,8 @@ from app.api.schemas.chat import (
 
 from app.pipelines.workflow_service import WorkflowService
 from app.conversation.conversation_manager import ConversationManager
+from app.api.dependencies.auth import get_current_user
+from app.auth.models import User
 
 router = APIRouter()
 
@@ -23,12 +25,14 @@ conversation_manager=ConversationManager();
 )
 async def chat(
     request: ChatRequest,
+    current_user: User = Depends(get_current_user)
 ):
 
     result = await workflow_service.ask(
         question=request.question,
         repository_id=request.repository_id,
         conversation_id=request.conversation_id,
+        user_id=current_user.id,
     )
 
     return ChatResponse(
@@ -43,10 +47,12 @@ async def chat(
 )
 async def list_conversations(
     repository_id: str,
+    current_user: User = Depends(get_current_user)
 ):
 
     conversations = conversation_manager.list_conversations(
-        repository_id
+        repository_id,
+        user_id=current_user.id,
     )
 
     return [
@@ -65,10 +71,12 @@ async def list_conversations(
 
 async def get_conversation(
     conversation_id: str,
+    current_user: User = Depends(get_current_user)
 ):
 
     conversation = conversation_manager.get_conversation(
-        conversation_id
+        conversation_id,
+        user_id=current_user.id,
     )
 
     if conversation is None:
@@ -99,10 +107,12 @@ async def get_conversation(
 
 async def delete_conversation(
     conversation_id:str,
+    current_user: User = Depends(get_current_user)
 ):
     
     conversation_manager.delete_conversation(
-        conversation_id
+        conversation_id,
+        user_id=current_user.id,
     )
 
     return {

@@ -13,6 +13,10 @@ class AgentState(TypedDict):
 
     question: str
 
+    user_id:str
+
+    repository_name:str
+
     execution_plan: ExecutionPlan | None
 
     tool_results: list[ToolResponse]

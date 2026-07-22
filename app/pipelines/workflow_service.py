@@ -3,20 +3,41 @@ from uuid import uuid4
 from app.LangGraph.workflow import workflow
 from app.conversation.conversation_manager import ConversationManager
 from app.tracing.trace_manager import TraceManager
+from fastapi import HTTPException, status
 
+from app.repository.repository import RepositoryRepository
 
 class WorkflowService:
 
     def __init__(self):
 
         self.conversation_manager = ConversationManager()
+        self.repository_repository = RepositoryRepository()
 
     async def ask(
         self,
         question: str,
         repository_id: str,
+        user_id:str,
         conversation_id: str | None = None,
     ):
+        repository = self.repository_repository.get(
+            repository_id
+        )
+
+        if repository is None:
+
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Repository not found.",
+            )
+
+        if repository.user_id != user_id:
+
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You do not have access to this repository.",
+            )
 
         if conversation_id is None:
 
@@ -32,6 +53,20 @@ class WorkflowService:
             question,
         )
 
+        if conversation_id is not None:
+
+            conversation = self.conversation_manager.get_conversation(
+                conversation_id,
+                user_id,
+            )
+
+            if conversation is None:
+
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Conversation not found.",
+                )
+
         history = (
             self.conversation_manager.get_history(
                 conversation_id
@@ -45,6 +80,10 @@ class WorkflowService:
         state = {
 
             "question": question,
+
+            "user_id": repository.user_id,
+
+            "repository_name": repository.repository_name,
 
             "repository_id": repository_id,
 

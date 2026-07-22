@@ -1,5 +1,9 @@
-from datetime import datetime
+from datetime import datetime,UTC
 from uuid import uuid4
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from app.repository.models import Repository
 
 from sqlalchemy import (
     String,
@@ -40,15 +44,15 @@ class Conversation(Base):
     )
 
     created_at: Mapped[datetime] = mapped_column(
-        DateTime,
-        default=datetime.utcnow,
-    )
+    DateTime(timezone=True),
+    default=lambda: datetime.now(UTC),
+)
 
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime,
-        default=datetime.utcnow,
-        onupdate=datetime.utcnow,
-    )
+    DateTime(timezone=True),
+    default=lambda: datetime.now(UTC),
+    onupdate=lambda: datetime.now(UTC),
+)
 
     repository: Mapped["Repository"] = relationship(
         back_populates="conversations",
@@ -90,8 +94,8 @@ class Message(Base):
     )
 
     created_at: Mapped[datetime] = mapped_column(
-        DateTime,
-        default=datetime.utcnow,
+        DateTime(timezone=True),
+        default=lambda: datetime.now(UTC)
     )
 
     conversation: Mapped["Conversation"] = relationship(

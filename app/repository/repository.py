@@ -25,6 +25,8 @@ class RepositoryRepository:
             session.commit()
             session.refresh(repository)
 
+            session.expunge(repository)
+
             return repository
 
     def exists(
@@ -52,10 +54,17 @@ class RepositoryRepository:
 
         with SessionLocal() as session:
 
-            return session.get(
+            repository = session.get(
                 Repository,
                 repository_id,
             )
+
+            if repository is not None:
+
+                session.refresh(repository)
+                session.expunge(repository)
+
+            return repository
 
     def get_by_name(
         self,
@@ -65,12 +74,19 @@ class RepositoryRepository:
 
         with SessionLocal() as session:
 
-            return session.execute(
+            repository = session.execute(
                 select(Repository).where(
                     Repository.user_id == user_id,
                     Repository.repository_name == repository_name,
                 )
             ).scalar_one_or_none()
+
+            if repository is not None:
+
+                session.refresh(repository)
+                session.expunge(repository)
+
+            return repository
 
     def list(
         self,
@@ -79,7 +95,7 @@ class RepositoryRepository:
 
         with SessionLocal() as session:
 
-            return (
+            repositories = (
                 session.execute(
                     select(Repository)
                     .where(
@@ -92,6 +108,11 @@ class RepositoryRepository:
                 .scalars()
                 .all()
             )
+
+            for repository in repositories:
+                session.expunge(repository)
+
+            return repositories
 
     def delete(
         self,

@@ -1,5 +1,10 @@
+from typing import TYPE_CHECKING
+
 from app.auth.models import User
-from app.conversation.models import Conversation
+
+if TYPE_CHECKING:
+    from app.conversation.models import Conversation
+    
 from uuid import uuid4
 
 from sqlalchemy import (

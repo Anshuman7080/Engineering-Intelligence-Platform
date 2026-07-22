@@ -68,7 +68,7 @@ class IngestionService:
         repository_name: str,
     ):
 
-        self.pinecone_service.delete_repository(
+        self.pinecone_service.delete_repository_vectors(
             user_id=user_id,
             repository_name=repository_name,
         )

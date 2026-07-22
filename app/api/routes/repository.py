@@ -8,10 +8,11 @@ from app.api.schemas.repository import (
 )
 
 from app.repository.repository_service import RepositoryService
-
+from app.services.repository_cleanup_service import RepositoryCleanupService
 router = APIRouter()
 
 repository_service = RepositoryService()
+repository_cleanup_service=RepositoryCleanupService()
 
 
 @router.post(
@@ -77,7 +78,7 @@ async def delete_repository(
             detail="Forbidden",
         )
 
-    repository_service.delete(
+    repository_cleanup_service.delete_repository(
         repository_id
     )
 

@@ -7,10 +7,9 @@ class ContextFormatter:
 
     @staticmethod
     def format(matches: list[Any]) -> str:
-       
 
         if not matches:
-            return 
+            return ""
 
         sections = []
 
@@ -24,19 +23,25 @@ class ContextFormatter:
 
             score = getattr(match, "score", None)
 
+            similarity = (
+                f"{score:.4f}"
+                if score is not None
+                else "N/A"
+            )
+
             section = f"""
-                Source {index}
+            Source {index}
 
-                File:
-                {source}
+            File:
+            {source}
 
-                Similarity:
-                {score:.4f}
+            Similarity:
+            {similarity}
 
-                Content:
+            Content:
 
-                {text}
-                """.strip()
+            {text}
+            """.strip()
 
             sections.append(section)
 

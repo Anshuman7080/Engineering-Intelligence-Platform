@@ -66,7 +66,7 @@ class RepositoryCleanupService:
             logger.info("Deleting repository folder...")
 
             self._delete_repository_folder(
-                user_id,
+               
                 repository_name,
             )
 
@@ -89,14 +89,12 @@ class RepositoryCleanupService:
 
     def _delete_repository_folder(
         self,
-        user_id: str,
         repository_name: str,
     ):
 
-        repository_path = (
-            "data/repositories/"
-            + repository_name.replace("/", "__")
-        )
+        repository_path = Path(
+            "data/repositories"
+        ) / repository_name.replace("/", "__")
 
         if repository_path.exists():
 
@@ -104,4 +102,10 @@ class RepositoryCleanupService:
 
             logger.info(
                 f"Deleted folder: {repository_path}"
+            )
+
+        else:
+
+            logger.info(
+                f"Repository folder does not exist: {repository_path}"
             )

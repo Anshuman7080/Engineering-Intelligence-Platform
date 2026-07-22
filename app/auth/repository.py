@@ -23,9 +23,14 @@ class UserRepository:
 
             session.add(user)
             session.commit()
+
             session.refresh(user)
 
+            # detach object safely
+            session.expunge(user)
+
             return user
+
 
     def get_by_email(
         self,
@@ -34,11 +39,19 @@ class UserRepository:
 
         with SessionLocal() as session:
 
-            return session.execute(
+            user = session.execute(
                 select(User).where(
                     User.email == email
                 )
             ).scalar_one_or_none()
+
+            if user is not None:
+
+                session.refresh(user)
+                session.expunge(user)
+
+            return user
+
 
     def get_by_username(
         self,
@@ -47,11 +60,19 @@ class UserRepository:
 
         with SessionLocal() as session:
 
-            return session.execute(
+            user = session.execute(
                 select(User).where(
                     User.username == username
                 )
             ).scalar_one_or_none()
+
+            if user is not None:
+
+                session.refresh(user)
+                session.expunge(user)
+
+            return user
+
 
     def get_by_id(
         self,
@@ -60,7 +81,14 @@ class UserRepository:
 
         with SessionLocal() as session:
 
-            return session.get(
+            user = session.get(
                 User,
                 user_id,
             )
+
+            if user is not None:
+
+                session.refresh(user)
+                session.expunge(user)
+
+            return user

@@ -34,7 +34,6 @@ Rules
 10. Keep the response concise but complete.
 """.strip()
 
-
 class ReportPromptBuilder:
 
     @staticmethod
@@ -53,6 +52,26 @@ class ReportPromptBuilder:
                 f'{message["content"]}\n'
             )
 
+        if verification is None:
+
+            decision = "stop"
+            confidence = 0.0
+            reasoning = (
+                "No verification result was produced."
+            )
+            missing_information = (
+                "Insufficient verified evidence."
+            )
+
+        else:
+
+            decision = verification.decision.value
+            confidence = verification.confidence
+            reasoning = verification.reasoning
+            missing_information = (
+                verification.missing_information
+            )
+
         user_prompt = f"""
 Conversation History
 
@@ -69,16 +88,16 @@ Question
 Verification
 
 Decision:
-{verification.decision.value}
+{decision}
 
 Confidence:
-{verification.confidence}
+{confidence}
 
 Reasoning:
-{verification.reasoning}
+{reasoning}
 
 Missing Information:
-{verification.missing_information}
+{missing_information}
 
 {"=" * 80}
 

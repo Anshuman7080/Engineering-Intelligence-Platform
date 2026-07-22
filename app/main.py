@@ -6,6 +6,7 @@ from app.core.logger import logger
 from app.api.routes.health import router as health_router
 from app.api.routes.ingestion import router as ingestion_router
 from app.database.init_db import init_db
+from app.graph.neo4j_driver import driver
 from app.api.routes.chat import (
     router as chat_router,
 )
@@ -59,6 +60,11 @@ app.include_router(
     tags=["Repositories"],
 )
 
+
+@app.on_event("shutdown")
+def shutdown():
+
+    driver.close()
 
 @app.get("/")
 async def root():

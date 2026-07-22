@@ -9,7 +9,7 @@ from app.llm.exceptions import (
     ProviderError,
     RateLimitError,
 )
-
+from fastapi.concurrency import run_in_threadpool
 
 class GeminiProvider(BaseLLMProvider):
 
@@ -36,7 +36,9 @@ class GeminiProvider(BaseLLMProvider):
 
         try:
 
-            response = self.client.models.generate_content(
+
+            response = await run_in_threadpool(
+                self.client.models.generate_content,
                 model=settings.GEMINI_MODEL,
                 contents=user_prompt,
                 config={
@@ -44,6 +46,15 @@ class GeminiProvider(BaseLLMProvider):
                     "temperature": temperature,
                 },
             )
+
+            # response = self.client.models.generate_content(
+            #     model=settings.GEMINI_MODEL,
+            #     contents=user_prompt,
+            #     config={
+            #         "system_instruction": system_prompt,
+            #         "temperature": temperature,
+            #     },
+            # )
             
             print("response of gemini",response)
 

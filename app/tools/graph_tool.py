@@ -9,10 +9,6 @@ class GraphTool:
         self.query_service = Neo4jQueryService()
 
     def _get(self, kwargs, *keys):
-        """
-        Returns the first matching argument.
-        Allows backward compatibility.
-        """
 
         for key in keys:
             value = kwargs.get(key)
@@ -30,6 +26,9 @@ class GraphTool:
         **kwargs,
     ):
 
+        user_id = self._get(kwargs, "user_id")
+        repository_name = self._get(kwargs, "repository_name")
+
         if query_type == GraphQueryType.FIND_SYMBOL:
 
             symbol = self._get(
@@ -38,7 +37,11 @@ class GraphTool:
                 "name",
             )
 
-            results = self.query_service.find_symbol(symbol)
+            results = self.query_service.find_symbol(
+                user_id=user_id,
+                repository_name=repository_name,
+                name=symbol,
+            )
 
             return ToolResponse(
                 tool="graph",
@@ -53,7 +56,11 @@ class GraphTool:
                 "symbol_name",
             )
 
-            results = self.query_service.find_callers(symbol)
+            results = self.query_service.find_callers(
+                user_id=user_id,
+                repository_name=repository_name,
+                symbol_name=symbol,
+            )
 
             return ToolResponse(
                 tool="graph",
@@ -68,7 +75,11 @@ class GraphTool:
                 "symbol_name",
             )
 
-            results = self.query_service.find_callees(symbol)
+            results = self.query_service.find_callees(
+                user_id=user_id,
+                repository_name=repository_name,
+                symbol_name=symbol,
+            )
 
             return ToolResponse(
                 tool="graph",
@@ -83,7 +94,11 @@ class GraphTool:
                 "file_path",
             )
 
-            results = self.query_service.find_dependencies(file_path)
+            results = self.query_service.find_dependencies(
+                user_id=user_id,
+                repository_name=repository_name,
+                file_path=file_path,
+            )
 
             return ToolResponse(
                 tool="graph",
@@ -98,7 +113,11 @@ class GraphTool:
                 "module_name",
             )
 
-            results = self.query_service.find_importers(module_name)
+            results = self.query_service.find_importers(
+                user_id=user_id,
+                repository_name=repository_name,
+                module_name=module_name,
+            )
 
             return ToolResponse(
                 tool="graph",
@@ -113,7 +132,11 @@ class GraphTool:
                 "file_path",
             )
 
-            results = self.query_service.find_commits_for_file(file_path)
+            results = self.query_service.find_commits_for_file(
+                user_id=user_id,
+                repository_name=repository_name,
+                file_path=file_path,
+            )
 
             return ToolResponse(
                 tool="graph",
@@ -128,7 +151,11 @@ class GraphTool:
                 "commit_hash",
             )
 
-            results = self.query_service.find_files_for_commit(commit_hash)
+            results = self.query_service.find_files_for_commit(
+                user_id=user_id,
+                repository_name=repository_name,
+                commit_hash=commit_hash,
+            )
 
             return ToolResponse(
                 tool="graph",
@@ -143,7 +170,11 @@ class GraphTool:
                 "issue_number",
             )
 
-            results = self.query_service.find_issue_commits(issue_number)
+            results = self.query_service.find_issue_commits(
+                user_id=user_id,
+                repository_name=repository_name,
+                issue_number=issue_number,
+            )
 
             return ToolResponse(
                 tool="graph",
@@ -158,7 +189,11 @@ class GraphTool:
                 "issue_number",
             )
 
-            results = self.query_service.find_issue_changes(issue_number)
+            results = self.query_service.find_issue_changes(
+                user_id=user_id,
+                repository_name=repository_name,
+                issue_number=issue_number,
+            )
 
             return ToolResponse(
                 tool="graph",

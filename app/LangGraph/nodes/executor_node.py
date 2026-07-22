@@ -44,13 +44,16 @@ async def executor_node(
 
             result = tool.execute(
                 query_type=GraphQueryType(step.action),
+                user_id=state["user_id"],
+                repository_name=state["repository_name"],
                 **step.arguments,
             )
 
         elif step.tool == ToolType.VECTOR:
 
             result = tool.execute(
-                repository_id=state["repository_id"],
+                user_id=state["user_id"],
+                repository_name=state["repository_name"],
                 **step.arguments,
             )
 

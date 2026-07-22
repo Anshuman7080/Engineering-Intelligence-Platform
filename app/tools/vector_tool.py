@@ -10,12 +10,14 @@ class VectorTool:
     def execute(
         self,
         query: str,
+        user_id:str,
         repository_name: str,
         top_k: int = 5,
     ):
 
         results= self.retriever.search(
             query=query,
+            user_id=user_id,
             repository_name=repository_name,
             top_k=top_k,
         )

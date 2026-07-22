@@ -2,6 +2,7 @@ from neo4j import GraphDatabase
 
 from app.core.settings import settings
 from app.core.logger import logger
+from app.graph.neo4j_driver import driver
 
 
 class GraphService:
@@ -11,13 +12,7 @@ class GraphService:
         logger.info("Connecting to Neo4j...")
         print(settings.NEO4J_URI)
 
-        self.driver = GraphDatabase.driver(
-            settings.NEO4J_URI,
-            auth=(
-                settings.NEO4J_USERNAME,
-                settings.NEO4J_PASSWORD,
-            ),
-        )
+        self.driver=driver
 
         logger.info("Neo4j connected successfully.")
 
