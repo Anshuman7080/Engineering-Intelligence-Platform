@@ -124,6 +124,25 @@ class ConversationRepository:
                 "created_at": conversation.created_at,
                 "updated_at": conversation.updated_at,
             }
+     
+    def delete_repository_conversations(
+    self,
+    repository_id: str,
+    ):
+
+        with SessionLocal() as session:
+
+            conversations = session.execute(
+                select(Conversation).where(
+                    Conversation.repository_id == repository_id
+                )
+            ).scalars().all()
+
+            for conversation in conversations:
+                session.delete(conversation)
+
+            session.commit() 
+
 
     def get_conversation_messages(
         self,

@@ -15,7 +15,6 @@ class SymbolResolver:
         class_name: str | None = None,
     ) -> str | None:
 
-        
         if class_name:
 
             full_name = (
@@ -29,7 +28,6 @@ class SymbolResolver:
             if len(candidates) == 1:
                 return candidates[0]
 
-       
         candidates = self.symbol_table.lookup(
             symbol_name
         )

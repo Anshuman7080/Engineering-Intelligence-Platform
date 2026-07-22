@@ -5,18 +5,23 @@ class Neo4jQueryService:
 
     def __init__(self):
 
-        self.graph_service=GraphService()
+        self.graph_service = GraphService()
 
 
     def find_symbol(
-    self,
-    name: str,
+        self,
+        user_id: str,
+        repository_name: str,
+        name: str,
     ):
 
         query = """
         MATCH (n)
+
         WHERE
             (n:Function OR n:Method OR n:Class)
+            AND n.user_id = $user_id
+            AND n.repository_name = $repository_name
             AND n.name = $name
 
         RETURN
@@ -29,21 +34,31 @@ class Neo4jQueryService:
         result = self.graph_service.execute(
             query,
             {
+                "user_id": user_id,
+                "repository_name": repository_name,
                 "name": name,
             },
         )
 
         return [record.data() for record in result]
-    
+
+
     def find_callers(
-    self,
-    symbol_name: str,
+        self,
+        user_id: str,
+        repository_name: str,
+        symbol_name: str,
     ):
 
         query = """
         MATCH (caller)-[:CALLS]->(callee)
 
-        WHERE callee.name = $name
+        WHERE
+            caller.user_id = $user_id
+            AND caller.repository_name = $repository_name
+            AND callee.user_id = $user_id
+            AND callee.repository_name = $repository_name
+            AND callee.name = $name
 
         RETURN
             labels(caller) AS caller_type,
@@ -56,24 +71,30 @@ class Neo4jQueryService:
         result = self.graph_service.execute(
             query,
             {
+                "user_id": user_id,
+                "repository_name": repository_name,
                 "name": symbol_name,
             },
         )
 
-        return [
-            record.data()
-            for record in result
-        ]
- 
+        return [record.data() for record in result]
+
     def find_callees(
-    self,
-    symbol_name: str,
+        self,
+        user_id: str,
+        repository_name: str,
+        symbol_name: str,
     ):
 
         query = """
         MATCH (caller)-[:CALLS]->(callee)
 
-        WHERE caller.name = $name
+        WHERE
+            caller.user_id = $user_id
+            AND caller.repository_name = $repository_name
+            AND callee.user_id = $user_id
+            AND callee.repository_name = $repository_name
+            AND caller.name = $name
 
         RETURN
             labels(callee) AS callee_type,
@@ -86,24 +107,31 @@ class Neo4jQueryService:
         result = self.graph_service.execute(
             query,
             {
+                "user_id": user_id,
+                "repository_name": repository_name,
                 "name": symbol_name,
             },
         )
 
-        return [
-            record.data()
-            for record in result
-        ] 
+        return [record.data() for record in result]
+
 
     def find_dependencies(
-    self,
-    file_path: str,
+        self,
+        user_id: str,
+        repository_name: str,
+        file_path: str,
     ):
 
         query = """
         MATCH (f:File)-[:DEPENDS_ON]->(dependency:File)
 
-        WHERE f.path = $path
+        WHERE
+            f.user_id = $user_id
+            AND f.repository_name = $repository_name
+            AND dependency.user_id = $user_id
+            AND dependency.repository_name = $repository_name
+            AND f.path = $path
 
         RETURN
             dependency.path AS dependency
@@ -114,24 +142,31 @@ class Neo4jQueryService:
         result = self.graph_service.execute(
             query,
             {
+                "user_id": user_id,
+                "repository_name": repository_name,
                 "path": file_path,
             },
         )
 
-        return [
-            record["dependency"]
-            for record in result
-        ] 
+        return [record["dependency"] for record in result]
 
+ 
     def find_importers(
-    self,
-    module_name: str,
+        self,
+        user_id: str,
+        repository_name: str,
+        module_name: str,
     ):
 
         query = """
         MATCH (file:File)-[:IMPORTS]->(module:Module)
 
-        WHERE module.name = $name
+        WHERE
+            file.user_id = $user_id
+            AND file.repository_name = $repository_name
+            AND module.user_id = $user_id
+            AND module.repository_name = $repository_name
+            AND module.name = $name
 
         RETURN
             file.path AS file
@@ -142,25 +177,31 @@ class Neo4jQueryService:
         result = self.graph_service.execute(
             query,
             {
+                "user_id": user_id,
+                "repository_name": repository_name,
                 "name": module_name,
             },
         )
 
-        return [
-            record["file"]
-            for record in result
-        ] 
-    
+        return [record["file"] for record in result]
 
+   
     def find_commits_for_file(
         self,
+        user_id: str,
+        repository_name: str,
         file_path: str,
     ):
 
         query = """
         MATCH (c:Commit)-[:MODIFIES]->(f:File)
 
-        WHERE f.path = $path
+        WHERE
+            c.user_id = $user_id
+            AND c.repository_name = $repository_name
+            AND f.user_id = $user_id
+            AND f.repository_name = $repository_name
+            AND f.path = $path
 
         RETURN
             c.hash AS hash,
@@ -174,24 +215,30 @@ class Neo4jQueryService:
         result = self.graph_service.execute(
             query,
             {
+                "user_id": user_id,
+                "repository_name": repository_name,
                 "path": file_path,
             },
         )
 
-        return [
-            record.data()
-            for record in result
-        ]    
+        return [record.data() for record in result]
 
     def find_files_for_commit(
-    self,
-    commit_hash: str,
+        self,
+        user_id: str,
+        repository_name: str,
+        commit_hash: str,
     ):
 
         query = """
         MATCH (c:Commit)-[:MODIFIES]->(f:File)
 
-        WHERE c.hash = $hash
+        WHERE
+            c.user_id = $user_id
+            AND c.repository_name = $repository_name
+            AND f.user_id = $user_id
+            AND f.repository_name = $repository_name
+            AND c.hash = $hash
 
         RETURN
             f.path AS file
@@ -202,24 +249,31 @@ class Neo4jQueryService:
         result = self.graph_service.execute(
             query,
             {
+                "user_id": user_id,
+                "repository_name": repository_name,
                 "hash": commit_hash,
             },
         )
 
-        return [
-            record["file"]
-            for record in result
-        ]
+        return [record["file"] for record in result]
 
+  
     def find_issue_commits(
-    self,
-    issue_number: int,
+        self,
+        user_id: str,
+        repository_name: str,
+        issue_number: int,
     ):
 
         query = """
         MATCH (c:Commit)-[:FIXES]->(i:Issue)
 
-        WHERE i.number = $issue
+        WHERE
+            c.user_id = $user_id
+            AND c.repository_name = $repository_name
+            AND i.user_id = $user_id
+            AND i.repository_name = $repository_name
+            AND i.number = $issue
 
         RETURN
             c.hash AS hash,
@@ -233,24 +287,32 @@ class Neo4jQueryService:
         result = self.graph_service.execute(
             query,
             {
+                "user_id": user_id,
+                "repository_name": repository_name,
                 "issue": issue_number,
             },
         )
 
-        return [
-            record.data()
-            for record in result
-        ]
+        return [record.data() for record in result]
 
     def find_issue_changes(
-    self,
-    issue_number: int,
+        self,
+        user_id: str,
+        repository_name: str,
+        issue_number: int,
     ):
 
         query = """
         MATCH (i:Issue)<-[:FIXES]-(c:Commit)-[:MODIFIES]->(f:File)
 
-        WHERE i.number = $issue
+        WHERE
+            i.user_id = $user_id
+            AND i.repository_name = $repository_name
+            AND c.user_id = $user_id
+            AND c.repository_name = $repository_name
+            AND f.user_id = $user_id
+            AND f.repository_name = $repository_name
+            AND i.number = $issue
 
         RETURN DISTINCT
             f.path AS file
@@ -261,17 +323,10 @@ class Neo4jQueryService:
         result = self.graph_service.execute(
             query,
             {
+                "user_id": user_id,
+                "repository_name": repository_name,
                 "issue": issue_number,
             },
         )
 
-        return [
-            record["file"]
-            for record in result
-        ]
-
-
-
-
-
-
+        return [record["file"] for record in result]

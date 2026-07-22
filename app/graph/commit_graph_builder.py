@@ -15,6 +15,7 @@ class CommitGraphBuilder:
     def build(
         self,
         commits: list[dict],
+        user_id: str,
         repository_name: str,
     ) -> GraphData:
 
@@ -23,13 +24,16 @@ class CommitGraphBuilder:
         for commit in commits:
 
             commit_id = (
-                f"{repository_name}:{commit['hash']}"
+                f"{user_id}:"
+                f"{repository_name}:"
+                f"{commit['hash']}"
             )
 
             graph.add_node(
                 label=NodeType.COMMIT.value,
+                user_id=user_id,
                 id=commit_id,
-                repository=repository_name,
+                repository_name=repository_name,
                 hash=commit["hash"],
                 author=commit["author"],
                 email=commit["email"],
@@ -37,7 +41,6 @@ class CommitGraphBuilder:
                 message=commit["message"],
             )
 
-            
             issues = self.issue_extractor.extract(
                 commit["message"]
             )
@@ -45,13 +48,16 @@ class CommitGraphBuilder:
             for issue in issues:
 
                 issue_id = (
-                    f"{repository_name}:issue:{issue}"
+                    f"{user_id}:"
+                    f"{repository_name}:"
+                    f"issue:{issue}"
                 )
 
                 graph.add_node(
                     label=NodeType.ISSUE.value,
+                    user_id=user_id,
                     id=issue_id,
-                    repository=repository_name,
+                    repository_name=repository_name,
                     number=issue,
                 )
 
@@ -67,13 +73,14 @@ class CommitGraphBuilder:
                     relationship=RelationshipType.FIXES.value,
                 )
 
-           
             for file in commit["files"]:
 
                 normalized_file = file.replace("\\", "/")
 
                 file_id = (
-                    f"{repository_name}:{normalized_file}"
+                    f"{user_id}:"
+                    f"{repository_name}:"
+                    f"{normalized_file}"
                 )
 
                 graph.add_relationship(
@@ -87,4 +94,5 @@ class CommitGraphBuilder:
                     },
                     relationship=RelationshipType.MODIFIES.value,
                 )
+
         return graph

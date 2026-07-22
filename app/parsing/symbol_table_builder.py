@@ -6,6 +6,7 @@ class SymbolTableBuilder:
     def build(
         self,
         parsed_repository: dict,
+        user_id:str,
         repository_name: str,
     ) -> SymbolTable:
 
@@ -18,6 +19,7 @@ class SymbolTableBuilder:
                 if function["is_method"]:
 
                     node_id = (
+                        f"{user_id}"
                         f"{repository_name}:"
                         f"{file['path']}:"
                         f"{function['class']}."
@@ -27,6 +29,7 @@ class SymbolTableBuilder:
                 else:
 
                     node_id = (
+                        f"{user_id}:"
                         f"{repository_name}:"
                         f"{file['path']}:"
                         f"{function['name']}"

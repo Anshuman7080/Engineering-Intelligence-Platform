@@ -23,7 +23,13 @@ class Neo4jIngestionService:
         self._insert_nodes(graph_data.nodes)
 
         logger.info("Inserting relationships...")
-        self._insert_relationships(graph_data.relationships)
+        self._insert_relationships(
+            graph_data.relationships
+        )
+
+    # ---------------------------------------------------------
+    # Helpers
+    # ---------------------------------------------------------
 
     def _chunk(
         self,
@@ -192,4 +198,3 @@ class Neo4jIngestionService:
                 "rows": formatted_rows,
             },
         )
-        

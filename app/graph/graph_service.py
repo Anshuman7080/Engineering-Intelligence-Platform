@@ -81,19 +81,19 @@ class GraphService:
 
         query = """
         MATCH (n)
-
         WHERE
-            n.user_id=$user_id
+            n.user_id = $user_id
             AND
-            n.repository_name=$repository_name
-
+            n.repository_name = $repository_name
         DETACH DELETE n
         """
 
         self.execute_write(
             query,
-            user_id=user_id,
-            repository_name=repository_name,
+            {
+                "user_id": user_id,
+                "repository_name": repository_name,
+            },
         )
 
     def clear_database(self):

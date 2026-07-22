@@ -39,15 +39,7 @@ class GraphData:
                 properties=properties,
             )
         )
-      
-    def merge(
-    self,
-    other: "GraphData",
-):
 
-        self.nodes.extend(other.nodes)
-        self.relationships.extend(other.relationships)  
-     
     def add_relationship(
         self,
         start_label: str,
@@ -66,3 +58,11 @@ class GraphData:
                 relationship=relationship,
             )
         )
+
+    def merge(
+        self,
+        other: "GraphData",
+    ):
+
+        self.nodes.extend(other.nodes)
+        self.relationships.extend(other.relationships)

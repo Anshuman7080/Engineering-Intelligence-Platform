@@ -43,7 +43,7 @@ class PineconeService:
         ):
 
             vector = {
-                "id": f"{user_id}_{repository_name}_{index}",
+                "id": f"{user_id}_{repository_name}",
                 "values": embedding,
                 "metadata": {
                     "user_id":user_id,
@@ -114,15 +114,15 @@ class PineconeService:
 
         return results.matches
 
-    def delete_repository(
+    def delete_repository_vectors(
     self,
     user_id: str,
     repository_name: str,
     ):
 
+        namespace = f"{user_id}:{repository_name}"
+
         self.index.delete(
-            filter={
-                "user_id": user_id,
-                "repository_name": repository_name,
-            }
+            delete_all=True,
+            namespace=namespace,
         )

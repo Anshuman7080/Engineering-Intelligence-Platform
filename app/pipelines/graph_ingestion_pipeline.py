@@ -7,7 +7,6 @@ from app.git.git_history_parser import GitHistoryParser
 from app.graph.commit_graph_builder import CommitGraphBuilder
 
 
-
 class GraphIngestionPipeline:
 
     def __init__(self):
@@ -20,15 +19,15 @@ class GraphIngestionPipeline:
 
         self.ingestion_service = Neo4jIngestionService()
 
-        self.graph_service=GraphService()
+        self.graph_service = GraphService()
 
     def ingest(
         self,
-        user_id:str,
+        user_id: str,
         repository_path: str,
         repository_name: str,
     ):
-        
+
         graph_builder = GraphBuilder(
             repository_root=repository_path,
         )
@@ -49,46 +48,39 @@ class GraphIngestionPipeline:
 
         graph_data = graph_builder.build(
             parsed_repository=parsed_repository,
+            user_id=user_id,
             repository_name=repository_name,
         )
 
         logger.info(
-            "step3 : parsing git commits"
+            "Step 3 : Parsing git history..."
         )
 
         commits = self.git_history_parser.parse(
             repository_path
         )
 
+        logger.info(
+            "Step 4 : Building commit graph..."
+        )
+
         commit_graph = self.commit_graph_builder.build(
             commits=commits,
+            user_id=user_id,
             repository_name=repository_name,
         )
 
         graph_data.merge(commit_graph)
 
         logger.info(
-            "Step 4 : Writing graph to Neo4j..."
+            "Step 5 : Creating Neo4j constraints..."
         )
 
         self.graph_service.create_constraints()
 
-        modify_count = sum(
-            1
-            for r in graph_data.relationships
-            if r.relationship == "MODIFIES"
+        logger.info(
+            "Step 6 : Writing graph to Neo4j..."
         )
-
-        print(f"MODIFIES relationships: {modify_count}")
-
-        commit_count = sum(
-            1
-            for n in graph_data.nodes
-            if n.label == "Commit"
-        )
-
-        print(f"Commit nodes: {commit_count}")
-
 
         self.ingestion_service.ingest(
             graph_data
