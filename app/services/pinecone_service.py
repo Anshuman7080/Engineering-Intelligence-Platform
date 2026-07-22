@@ -28,6 +28,7 @@ class PineconeService:
         documents: list[Document],
         embeddings: list[list[float]],
         repository_name: str,
+        user_id:str,
         batch_size: int = 100,
     ):
 
@@ -42,9 +43,10 @@ class PineconeService:
         ):
 
             vector = {
-                "id": f"{repository_name}_{index}",
+                "id": f"{user_id}_{repository_name}_{index}",
                 "values": embedding,
                 "metadata": {
+                    "user_id":user_id,
                     "repository": repository_name,
                     "source": document.metadata.get("source", ""),
                     "chunk_index": index,
@@ -73,6 +75,7 @@ class PineconeService:
     def similarity_search(
         self,
         embedding: list[float],
+        user_id:str,
         top_k: int = 5,
         repository_name: str | None = None,
     ):
@@ -84,6 +87,9 @@ class PineconeService:
         if repository_name:
 
             filter_dict = {
+                "user_id":{
+                   "$eq":user_id,
+                },
                 "repository": {
                     "$eq": repository_name
                 }
@@ -109,20 +115,14 @@ class PineconeService:
         return results.matches
 
     def delete_repository(
-        self,
-        repository_name: str,
+    self,
+    user_id: str,
+    repository_name: str,
     ):
-
-        logger.info(
-            f"Deleting repository: {repository_name}"
-        )
 
         self.index.delete(
             filter={
-                "repository": {
-                    "$eq": repository_name
-                }
+                "user_id": user_id,
+                "repository_name": repository_name,
             }
         )
-
-        logger.info("Repository deleted successfully.")

@@ -6,6 +6,7 @@ def main():
     service = IngestionService()
 
     result = service.ingest(
+        user_id="test-user-id",
         repository_url="https://github.com/langchain-ai/langchain"
     )
 

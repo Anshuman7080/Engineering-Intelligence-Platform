@@ -13,14 +13,14 @@ class ConversationRepository:
 
     def create_conversation(
         self,
-        repository_name: str,
+        repository_id: str,
         title: str,
     ) -> str:
 
         with SessionLocal() as session:
 
             conversation = Conversation(
-                repository_name=repository_name,
+                repository_id=repository_id,
                 title=title,
             )
 
@@ -58,8 +58,8 @@ class ConversationRepository:
         )
 
     def list_conversations(
-    self,
-    repository_name: str,
+        self,
+        repository_id: str,
     ) -> list[dict]:
 
         with SessionLocal() as session:
@@ -67,7 +67,7 @@ class ConversationRepository:
             conversations = session.execute(
                 select(Conversation)
                 .where(
-                    Conversation.repository_name == repository_name
+                    Conversation.repository_id == repository_id
                 )
                 .order_by(
                     Conversation.updated_at.desc()
@@ -78,7 +78,7 @@ class ConversationRepository:
                 {
                     "id": conversation.id,
                     "title": conversation.title,
-                    "repository_name": conversation.repository_name,
+                    "repository_id": conversation.repository_id,
                     "created_at": conversation.created_at,
                     "updated_at": conversation.updated_at,
                 }
@@ -103,8 +103,8 @@ class ConversationRepository:
                 session.commit()
 
     def get_conversation(
-    self,
-    conversation_id: str,
+        self,
+        conversation_id: str,
     ) -> dict | None:
 
         with SessionLocal() as session:
@@ -119,7 +119,7 @@ class ConversationRepository:
 
             return {
                 "id": conversation.id,
-                "repository_name": conversation.repository_name,
+                "repository_id": conversation.repository_id,
                 "title": conversation.title,
                 "created_at": conversation.created_at,
                 "updated_at": conversation.updated_at,

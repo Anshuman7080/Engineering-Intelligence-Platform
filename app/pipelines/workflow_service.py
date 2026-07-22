@@ -1,8 +1,9 @@
-from app.LangGraph.workflow import workflow
-
-from app.conversation.conversation_manager import ConversationManager
 from uuid import uuid4
+
+from app.LangGraph.workflow import workflow
+from app.conversation.conversation_manager import ConversationManager
 from app.tracing.trace_manager import TraceManager
+
 
 class WorkflowService:
 
@@ -13,15 +14,15 @@ class WorkflowService:
     async def ask(
         self,
         question: str,
-        repository_name: str,
+        repository_id: str,
         conversation_id: str | None = None,
     ):
 
-        if not conversation_id:
+        if conversation_id is None:
 
             conversation_id = (
                 self.conversation_manager.create_conversation(
-                    repository_name=repository_name,
+                    repository_id=repository_id,
                     title=question,
                 )
             )
@@ -37,15 +38,15 @@ class WorkflowService:
             )
         )
 
-        trace_id=str(uuid4())
+        trace_id = str(uuid4())
 
-        trace_manager=TraceManager()
+        trace_manager = TraceManager()
 
         state = {
 
             "question": question,
 
-            "repository_name": repository_name,
+            "repository_id": repository_id,
 
             "history": history,
 
@@ -66,7 +67,6 @@ class WorkflowService:
             "trace_manager": trace_manager,
         }
 
-      
         result = await workflow.ainvoke(
             state
         )

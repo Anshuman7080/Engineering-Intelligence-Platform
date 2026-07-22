@@ -5,7 +5,7 @@ class ChatRequest(BaseModel):
 
     question: str
 
-    repository_name: str
+    repository_id: str
 
     conversation_id: str | None = None
 
@@ -23,7 +23,7 @@ class ConversationSummary(BaseModel):
 
     title: str
 
-    repository_name: str
+    repository_id: str
 
     created_at: str
 
@@ -48,7 +48,7 @@ class ChatMessage(BaseModel):
 
 class ConversationResponse(BaseModel):
     id:str
-    repository_name:str
+    repository_id:str
     title:str
     messages:list[ChatMessage]
     

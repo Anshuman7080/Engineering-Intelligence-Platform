@@ -1,6 +1,7 @@
 from uuid import uuid4
 
 from sqlalchemy import Column, String, DateTime
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
 from app.database.base import Base
@@ -37,4 +38,11 @@ class User(Base):
     created_at = Column(
         DateTime(timezone=True),
         server_default=func.now(),
+    )
+
+    repositories = relationship(
+        "Repository",
+        back_populates="user",
+        cascade="all, delete-orphan",
+        lazy="selectin",
     )

@@ -50,7 +50,7 @@ async def executor_node(
         elif step.tool == ToolType.VECTOR:
 
             result = tool.execute(
-                repository_name=state["repository_name"],
+                repository_id=state["repository_id"],
                 **step.arguments,
             )
 

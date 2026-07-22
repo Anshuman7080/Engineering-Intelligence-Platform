@@ -27,7 +27,7 @@ async def chat(
 
     result = await workflow_service.ask(
         question=request.question,
-        repository_name=request.repository_name,
+        repository_id=request.repository_id,
         conversation_id=request.conversation_id,
     )
 
@@ -38,15 +38,15 @@ async def chat(
 
 
 @router.get(
-    "/conversations/{repository_name}",
+    "/conversations/{repository_id}",
     response_model=list[ConversationItem],
 )
 async def list_conversations(
-    repository_name: str,
+    repository_id: str,
 ):
 
     conversations = conversation_manager.list_conversations(
-        repository_name
+        repository_id
     )
 
     return [
@@ -83,7 +83,7 @@ async def get_conversation(
 
     return ConversationResponse(
         id=conversation["id"],
-        repository_name=conversation["repository_name"],
+        repository_id=conversation["repository_id"],
         title=conversation["title"],
         messages=[
             ChatMessage(**message)

@@ -12,6 +12,9 @@ from app.api.routes.chat import (
 from app.api.routes.auth import (
     router as auth_router
 )
+from app.api.routes.repository import (
+    router as repository_router
+)
 
 
 
@@ -49,6 +52,11 @@ app.include_router(
     auth_router,
     prefix="/auth",
     tags=["Authentication"],
+)
+app.include_router(
+    repository_router,
+    prefix="/repositories",
+    tags=["Repositories"],
 )
 
 

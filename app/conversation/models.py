@@ -26,8 +26,11 @@ class Conversation(Base):
         default=lambda: str(uuid4()),
     )
 
-    repository_name: Mapped[str] = mapped_column(
-        String,
+    repository_id: Mapped[str] = mapped_column(
+        ForeignKey(
+            "repositories.id",
+            ondelete="CASCADE",
+        ),
         nullable=False,
     )
 
@@ -47,6 +50,11 @@ class Conversation(Base):
         onupdate=datetime.utcnow,
     )
 
+    repository: Mapped["Repository"] = relationship(
+        back_populates="conversations",
+        lazy="selectin",
+    )
+
     messages: Mapped[list["Message"]] = relationship(
         back_populates="conversation",
         cascade="all, delete-orphan",
@@ -64,7 +72,10 @@ class Message(Base):
     )
 
     conversation_id: Mapped[str] = mapped_column(
-        ForeignKey("conversations.id"),
+        ForeignKey(
+            "conversations.id",
+            ondelete="CASCADE",
+        ),
         nullable=False,
     )
 

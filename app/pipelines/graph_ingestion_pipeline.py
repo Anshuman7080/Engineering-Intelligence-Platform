@@ -24,6 +24,7 @@ class GraphIngestionPipeline:
 
     def ingest(
         self,
+        user_id:str,
         repository_path: str,
         repository_name: str,
     ):

@@ -73,6 +73,29 @@ class GraphService:
 
             self.execute_write(query)
 
+    def delete_repository(
+        self,
+        user_id: str,
+        repository_name: str,
+    ):
+
+        query = """
+        MATCH (n)
+
+        WHERE
+            n.user_id=$user_id
+            AND
+            n.repository_name=$repository_name
+
+        DETACH DELETE n
+        """
+
+        self.execute_write(
+            query,
+            user_id=user_id,
+            repository_name=repository_name,
+        )
+
     def clear_database(self):
 
         logger.warning("Clearing Neo4j database.")

@@ -9,12 +9,12 @@ class ConversationManager:
 
     def create_conversation(
         self,
-        repository_name: str,
+        repository_id: str,
         title: str,
     ) -> str:
 
         return self.repository.create_conversation(
-            repository_name=repository_name,
+            repository_id=repository_id,
             title=title,
         )
 
@@ -53,11 +53,11 @@ class ConversationManager:
 
     def list_conversations(
         self,
-        repository_name: str,
+        repository_id: str,
     ):
 
         return self.repository.list_conversations(
-            repository_name
+            repository_id
         )
 
     def delete_conversation(
@@ -69,11 +69,11 @@ class ConversationManager:
             conversation_id
         )
 
-
     def get_conversation(
         self,
         conversation_id: str,
     ):
+
         return self.repository.get_conversation(
             conversation_id
-        )    
+        )

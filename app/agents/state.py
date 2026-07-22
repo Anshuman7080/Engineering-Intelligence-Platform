@@ -9,7 +9,7 @@ from app.agents.verification_models import (
 
 class AgentState(TypedDict):
 
-    repository_name: str
+    repository_id: str
 
     question: str
 
