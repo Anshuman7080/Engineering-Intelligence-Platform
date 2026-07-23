@@ -90,9 +90,9 @@ async def get_conversation(
     )
 
     return ConversationResponse(
-        id=conversation["id"],
-        repository_id=conversation["repository_id"],
-        title=conversation["title"],
+        id=conversation.id,
+        repository_id=conversation.repository_id,
+        title=conversation.title,
         messages=[
             ChatMessage(**message)
             for message in history

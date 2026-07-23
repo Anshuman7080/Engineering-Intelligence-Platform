@@ -58,7 +58,7 @@ class CommitGraphBuilder:
                     user_id=user_id,
                     id=issue_id,
                     repository_name=repository_name,
-                    number=issue,
+                    number=int(issue),
                 )
 
                 graph.add_relationship(

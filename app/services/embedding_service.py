@@ -1,6 +1,6 @@
 from sentence_transformers import SentenceTransformer
 from langchain_core.documents import Document
-
+from app.services.embedding_model import embedding_model
 from app.core.settings import settings
 from app.core.logger import logger
 
@@ -9,15 +9,7 @@ class EmbeddingService:
 
     def __init__(self):
 
-        logger.info(
-            f"Loading embedding model: {settings.EMBEDDING_MODEL}"
-        )
-
-        self.model = SentenceTransformer(
-            settings.EMBEDDING_MODEL
-        )
-
-        logger.info("Embedding model loaded successfully.")
+        self.model = embedding_model
 
     def embed_documents(
         self,

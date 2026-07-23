@@ -6,6 +6,7 @@ from app.api.schemas.repository import (
     RepositoryCreateRequest,
     RepositoryResponse,
 )
+from app.utils.github import extract_repository_name
 
 from app.repository.repository_service import RepositoryService
 from app.services.repository_cleanup_service import RepositoryCleanupService
@@ -26,12 +27,9 @@ async def create_repository(
     ),
 ):
 
-    repository_name = (
-        request.repository_url
-        .rstrip("/")
-        .split("/")[-1]
-        .replace(".git", "")
-    )
+    repository_name = extract_repository_name(
+    str(request.repository_url)
+)
 
     repository = repository_service.create(
         user_id=current_user.id,

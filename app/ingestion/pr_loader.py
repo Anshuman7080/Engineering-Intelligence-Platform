@@ -14,24 +14,37 @@ class PullRequestLoader:
         logger.info("Loading pull requests...")
 
         owner, repo = repository_url.rstrip("/").split("/")[-2:]
+        repo = repo.removesuffix(".git")
 
         url = (
             f"https://api.github.com/repos/"
             f"{owner}/{repo}/pulls"
         )
 
-        response = requests.get(
-            url,
-            params={
-                "state": "all",
-                "per_page": 100,
-            },
-            headers={
-                "Accept": "application/vnd.github+json"
-            },
-        )
+        try:
 
-        response.raise_for_status()
+            response = requests.get(
+                url,
+                params={
+                    "state": "all",
+                    "per_page": 100,
+                },
+                headers={
+                    "Accept": "application/vnd.github+json",
+                },
+                timeout=30,
+            )
+
+            response.raise_for_status()
+
+        except requests.RequestException as e:
+
+            logger.exception(
+                f"Failed to fetch pull requests for {owner}/{repo}: {e}"
+            )
+
+            # Continue ingestion without PR documents
+            return []
 
         prs = response.json()
 

@@ -198,4 +198,9 @@ class ConversationRepository:
                 .first()
             )
 
+            if conversation is not None:
+
+                session.refresh(conversation)
+                session.expunge(conversation)
+
             return conversation

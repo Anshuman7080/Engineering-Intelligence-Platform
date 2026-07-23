@@ -128,11 +128,19 @@ class Neo4jIngestionService:
 
         for relationship in relationships:
 
-            grouped[
-                relationship.relationship
-            ].append(relationship)
+            key = (
+                relationship.relationship,
+                relationship.start_label,
+                relationship.end_label,
+            )
 
-        for relation, rows in grouped.items():
+            grouped[key].append(relationship)
+
+        for (
+        relation,
+        start_label,
+        end_label,
+    ), rows in grouped.items():
 
             total = len(rows)
 
@@ -146,6 +154,8 @@ class Neo4jIngestionService:
 
                 self._insert_relationship_batch(
                     relation,
+                    start_label,
+                    end_label,
                     batch,
                 )
 
@@ -158,14 +168,15 @@ class Neo4jIngestionService:
     def _insert_relationship_batch(
         self,
         relationship: str,
+        start_label:str,
+        end_label:str,
         rows,
     ):
 
         if not rows:
             return
 
-        start_label = rows[0].start_label
-        end_label = rows[0].end_label
+        
 
         formatted_rows = []
 

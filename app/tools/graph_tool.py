@@ -165,10 +165,10 @@ class GraphTool:
 
         elif query_type == GraphQueryType.FIND_ISSUE_COMMITS:
 
-            issue_number = self._get(
+            issue_number =int( self._get(
                 kwargs,
                 "issue_number",
-            )
+            ))
 
             results = self.query_service.find_issue_commits(
                 user_id=user_id,
@@ -184,10 +184,10 @@ class GraphTool:
 
         elif query_type == GraphQueryType.FIND_ISSUE_CHANGES:
 
-            issue_number = self._get(
+            issue_number =int( self._get(
                 kwargs,
                 "issue_number",
-            )
+            ))
 
             results = self.query_service.find_issue_changes(
                 user_id=user_id,

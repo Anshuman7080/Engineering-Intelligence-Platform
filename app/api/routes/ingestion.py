@@ -19,7 +19,7 @@ async def ingest_repository(
     result = await run_in_threadpool(
         pipeline.ingest,
         current_user.id,
-        request.repository_url,
+        str(request.repository_url),
     )
 
     return result
