@@ -14,6 +14,7 @@ async def verification_node(
         question=state["question"],
         execution_plan=state["execution_plan"],
         tool_results=state["tool_results"],
+        history=state["history"]
     )
 
     state["verification"] = verification

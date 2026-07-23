@@ -6,24 +6,32 @@ from app.agents.planning_models import ExecutionPlan
 class PlannerOutputParser:
 
     @staticmethod
-    def parse(
-        response: str,
-    ) -> ExecutionPlan:
+    def parse(response: str) -> ExecutionPlan:
 
         response = response.strip()
 
-        if response.startswith("```"):
+       
+        if "```" in response:
+            start = response.find("```")
+            end = response.rfind("```")
 
-            lines = response.splitlines()
+            if start != -1 and end != start:
+                response = response[start + 3:end]
 
-            if lines:
-                lines = lines[1:]
+                if response.startswith("json"):
+                    response = response[4:]
 
-            if lines and lines[-1].strip() == "```":
-                lines = lines[:-1]
-
-            response = "\n".join(lines).strip()
+                response = response.strip()
 
         data = json.loads(response)
+
+   
+        for step in data.get("steps", []):
+
+            if isinstance(step.get("tool"), str):
+                step["tool"] = step["tool"].strip().lower()
+
+            if isinstance(step.get("action"), str):
+                step["action"] = step["action"].strip().lower()
 
         return ExecutionPlan.model_validate(data)

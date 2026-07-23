@@ -1,6 +1,8 @@
-from pathlib import Path
-import shutil
 
+import os
+import stat
+import shutil
+from pathlib import Path
 from fastapi import HTTPException
 
 from app.pipelines.ingestion_pipeline import IngestionPipeline
@@ -49,18 +51,31 @@ class IngestionService:
             repository_path=repository_path,
         )
 
+    def _remove_readonly(func, path, excinfo):
+        """
+        Called by shutil.rmtree when deletion fails because a file is read-only.
+        """
+        os.chmod(path, stat.S_IWRITE)
+        func(path)
+
+
     def rollback_files(
-        self,
-        repository_path: str | None,
-    ):
+            self,
+            repository_path: str | None,
+        ):
 
-        if repository_path is None:
-            return
+            if repository_path is None:
+                return
 
-        path = Path(repository_path)
+            path = Path(repository_path)
 
-        if path.exists():
-            shutil.rmtree(path)
+            if not path.exists():
+                return
+
+            shutil.rmtree(
+                path,
+                onexc=self._remove_readonly,   
+            )
 
     def rollback_pinecone(
         self,

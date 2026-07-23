@@ -4,6 +4,7 @@ from app.agents.tool_type import ToolType
 from app.tools.tool_registry import ToolRegistry
 from app.tools.graph_query_types import GraphQueryType
 
+from dataclasses import asdict
 
 registry = ToolRegistry()
 
@@ -71,7 +72,7 @@ async def executor_node(
 
             title="Tool Result",
 
-            data=result.model_dump(),
+            data=asdict(result),
 
         ) 
 

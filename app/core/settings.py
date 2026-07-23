@@ -29,7 +29,7 @@ class Settings(BaseSettings):
     COHERE_EMBEDDING_MODEL:str
     JWT_SECRET:str
     JWT_ALGORITHM:str="HS256"
-    JWT_EXPIRE_MINUTES:int=60
+    JWT_EXPIRE_MINUTES:int=600
 
     model_config = SettingsConfigDict(
         env_file=".env",

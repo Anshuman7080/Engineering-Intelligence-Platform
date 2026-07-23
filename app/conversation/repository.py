@@ -161,6 +161,8 @@ class ConversationRepository:
                 )
             ).scalar_one_or_none()
 
+            print("conversation history is...........---->",conversation)
+
             if conversation is None:
                 return []
 

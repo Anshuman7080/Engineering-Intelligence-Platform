@@ -8,8 +8,9 @@ Your job is to verify whether the collected evidence actually supports answering
 Carefully inspect:
 
 1. User question
-2. Execution plan
-3. Tool outputs
+2. Conversation history
+3. Execution plan
+4. Tool outputs
 
 Determine:
 
@@ -35,6 +36,10 @@ Return "stop" if:
 • The question is unrelated to the repository.
 • Additional retries are unlikely to improve the result.
 
+When evaluating the current question, use the conversation history to resolve
+references such as "it", "that", "this", "they", "the previous function", etc.
+
+The latest user question always has the highest priority.
 
 Return ONLY valid JSON.
 
@@ -56,21 +61,34 @@ class VerificationPromptBuilder:
     def build(
         question: str,
         execution_plan,
-        evidence:str,
+        evidence: str,
+        history: list[dict],
     ):
 
         user_prompt = f"""
-Question
+Conversation History
+
+{history}
+
+============================================================
+
+Current Question
 
 {question}
+
+============================================================
 
 Execution Plan
 
 {execution_plan.model_dump_json(indent=2)}
 
+============================================================
+
 Tool Results
 
 {evidence}
+
+============================================================
 
 Verification:
 """.strip()

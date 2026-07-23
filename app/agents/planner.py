@@ -17,8 +17,10 @@ class Planner:
     async def plan(
         self,
         question: str,
+        history: list[dict],
         previous_plan: ExecutionPlan | None = None,
         verification: VerificationResult | None = None,
+        
     ):
 
         system_prompt, user_prompt = (
@@ -26,7 +28,9 @@ class Planner:
                 question=question,
                 previous_plan=previous_plan,
                 verification=verification,
+                history=history,
             )
+
         )
 
         response = await self.llm.generate(

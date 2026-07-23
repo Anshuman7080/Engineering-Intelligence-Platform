@@ -24,6 +24,7 @@ class Verifier:
         question: str,
         execution_plan,
         tool_results,
+        history: list[dict]
     ):
 
         evidence = EvidenceFormatter.format(
@@ -35,6 +36,7 @@ class Verifier:
                 question=question,
                 execution_plan=execution_plan,
                 evidence=evidence,
+                history=history,
             )
         )
 

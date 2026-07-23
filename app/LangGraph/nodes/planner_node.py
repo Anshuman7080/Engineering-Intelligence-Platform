@@ -12,6 +12,7 @@ async def planner_node(
         question=state["question"],
         previous_plan=state["execution_plan"],
         verification=state["verification"],
+        history=state["history"]
     )
 
     state["execution_plan"] = plan

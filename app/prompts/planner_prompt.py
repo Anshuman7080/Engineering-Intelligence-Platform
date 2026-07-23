@@ -171,6 +171,37 @@ Rules
 
 ============================================================
 
+
+IMPORTANT:
+
+tool must be exactly one of:
+- "graph"
+- "vector"
+
+Use lowercase only.
+
+action must also always be lowercase.
+
+============================================================
+
+
+Conversation History
+
+The conversation history is provided only to help understand the user's intent and references.
+
+Examples:
+- "Explain it"
+- "Who calls this function?"
+- "What about the previous class?"
+
+Use the conversation history ONLY to resolve such references.
+
+Never use conversation history as factual evidence about the repository.
+
+Always generate the execution plan based on the user's current question.
+
+============================================================
+
 Output Schema
 
 {
@@ -194,6 +225,7 @@ class PlannerPromptBuilder:
     @staticmethod
     def build(
         question: str,
+        history: list[dict],
         previous_plan=None,
         verification=None,
     ):

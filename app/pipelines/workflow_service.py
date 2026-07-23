@@ -39,7 +39,7 @@ class WorkflowService:
                 detail="You do not have access to this repository.",
             )
 
-        if conversation_id is None:
+        if not conversation_id :
 
             conversation_id = (
                 self.conversation_manager.create_conversation(
