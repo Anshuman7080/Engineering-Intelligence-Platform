@@ -187,18 +187,48 @@ action must also always be lowercase.
 
 Conversation History
 
-The conversation history is provided only to help understand the user's intent and references.
+The conversation history is provided to maintain conversational context across multiple user questions.
 
-Examples:
-- "Explain it"
-- "Who calls this function?"
-- "What about the previous class?"
+The history may contain:
+- Previously discussed classes, functions, files, modules, commits, issues, or architecture.
+- Symbols already identified during earlier turns.
+- Follow-up questions such as:
+  - "Explain it."
+  - "What does this return?"
+  - "Who calls it?"
+  - "Show its implementation."
+  - "How does it compare to the previous one?"
+  - "What about the other method?"
 
-Use the conversation history ONLY to resolve such references.
+When interpreting the CURRENT question:
 
-Never use conversation history as factual evidence about the repository.
+1. Use conversation history to resolve references such as:
+   - it
+   - this
+   - that
+   - previous
+   - above
+   - earlier
+   - same file
+   - same class
+   - same function
 
-Always generate the execution plan based on the user's current question.
+2. If the current question depends on a previously discussed symbol, infer that symbol from the conversation history and generate the execution plan accordingly.
+
+3. If the current question introduces a NEW symbol or topic, ignore unrelated history and plan only for the new request.
+
+4. Conversation history is ONLY for understanding user intent and references.
+   It is NOT evidence about the repository.
+
+5. Never assume repository facts from history.
+   Always use Graph and Vector tools to retrieve repository information.
+
+6. If history already identifies the target symbol, DO NOT search for the symbol again unless required.
+   Instead, generate the next investigation step that answers the user's current question.
+
+The execution plan must always answer the CURRENT user question while using conversation history only to understand what the user is referring to.
+
+
 
 ============================================================
 
@@ -219,7 +249,6 @@ Output Schema
 """.strip()
 
 
-
 class PlannerPromptBuilder:
 
     @staticmethod
@@ -229,6 +258,14 @@ class PlannerPromptBuilder:
         previous_plan=None,
         verification=None,
     ):
+
+        history_text = ""
+
+        for message in history:
+            history_text += (
+                f'{message["role"].capitalize()}: '
+                f'{message["content"]}\n'
+            )
 
         retry_context = ""
 
@@ -262,6 +299,16 @@ Do not repeat the same mistakes.
 """.strip()
 
         user_prompt = f"""
+Conversation History
+
+Use the conversation history ONLY to understand the user's intent and resolve references such as "this", "that", "it", "previous function", etc.
+
+Do NOT use the conversation history as evidence.
+
+{history_text}
+
+============================================================
+
 Question
 
 {question}
