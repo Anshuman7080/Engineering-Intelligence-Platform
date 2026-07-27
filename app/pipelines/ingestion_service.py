@@ -4,6 +4,7 @@ import stat
 import shutil
 from pathlib import Path
 from fastapi import HTTPException
+from app.utils.github import validate_python_repository
 
 from app.pipelines.ingestion_pipeline import IngestionPipeline
 from app.pipelines.graph_ingestion_pipeline import GraphIngestionPipeline
@@ -107,6 +108,10 @@ class IngestionService:
 
         repository_name = extract_repository_name(
             repository_url
+        )
+        
+        validate_python_repository(
+            repository_name
         )
 
         if self.repository_service.exists(

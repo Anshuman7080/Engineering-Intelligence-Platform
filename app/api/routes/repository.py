@@ -17,7 +17,7 @@ repository_cleanup_service=RepositoryCleanupService()
 
 
 @router.post(
-    "/",
+    "/create_repo",
     response_model=RepositoryResponse,
 )
 async def create_repository(
@@ -41,7 +41,7 @@ async def create_repository(
 
 
 @router.get(
-    "/",
+    "/repos",
     response_model=list[RepositoryResponse],
 )
 async def list_repositories(
@@ -65,16 +65,16 @@ async def delete_repository(
     ),
 ):
 
-    repository = repository_service.get(
-        repository_id
-    )
+    # repository = repository_service.get(
+    #     repository_id
+    # )
 
-    if repository.user_id != current_user.id:
+    # if repository.user_id != current_user.id:
 
-        raise HTTPException(
-            status_code=403,
-            detail="Forbidden",
-        )
+    #     raise HTTPException(
+    #         status_code=403,
+    #         detail="Forbidden",
+    #     )
 
     repository_cleanup_service.delete_repository(
         repository_id

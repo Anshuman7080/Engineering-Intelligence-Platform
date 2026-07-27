@@ -193,6 +193,8 @@ class Neo4jQueryService:
         file_path: str,
     ):
 
+        
+
         query = """
         MATCH (c:Commit)-[:MODIFIES]->(f:File)
 
@@ -229,6 +231,10 @@ class Neo4jQueryService:
         repository_name: str,
         commit_hash: str,
     ):
+
+        print("user_id:", user_id)
+        print("repository_name:", repository_name)
+        print("commit_hash:", commit_hash)
 
         query = """
         MATCH (c:Commit)-[:MODIFIES]->(f:File)

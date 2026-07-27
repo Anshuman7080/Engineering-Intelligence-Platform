@@ -1,0 +1,153 @@
+================================================================================
+2026-07-25T15:06:44.815341
+NODE : Planner
+TITLE: Execution Plan
+
+{
+    "reasoning": "The user is asking for the implementation details of LangChain's callback system. I will perform a semantic search to retrieve the relevant documentation and code structure to provide a comprehensive explanation of how callbacks are implemented.",
+    "steps": [
+        {
+            "tool": "vector",
+            "action": "semantic_search",
+            "arguments": {
+                "query": "how are callbacks implemented in LangChain"
+            }
+        },
+        {
+            "tool": "graph",
+            "action": "find_symbol",
+            "arguments": {
+                "symbol_name": "BaseCallbackHandler"
+            }
+        },
+        {
+            "tool": "graph",
+            "action": "find_symbol",
+            "arguments": {
+                "symbol_name": "CallbackManager"
+            }
+        }
+    ]
+}
+
+================================================================================
+2026-07-25T15:06:44.817349
+NODE : Executor
+TITLE: Executing Tool
+
+{
+    "tool": "vector",
+    "action": "semantic_search",
+    "arguments": {
+        "query": "how are callbacks implemented in LangChain"
+    }
+}
+
+================================================================================
+2026-07-25T15:06:46.357997
+NODE : Executor
+TITLE: Tool Result
+
+{
+    "tool": "vector",
+    "query_type": "semantic_search",
+    "results": [
+        "ScoredVector(id='e9e3bcec-5ac3-4e32-8afe-2339315672f5_langchain-ai/langchain_27551', score=0.863559604, values=[], metadata={'chunk_index': 27551, 'repository': 'langchain-ai/langchain', 'source': 'commit:e512d3c6a64a305443d1cf9e5b0b0839691adfa4', 'text': 'langchain: `callbacks` imports fix (#20348)', 'user_id': 'e9e3bcec-5ac3-4e32-8afe-2339315672f5'})",
+        "ScoredVector(id='e9e3bcec-5ac3-4e32-8afe-2339315672f5_langchain-ai/langchain_29319', score=0.857925296, values=[], metadata={'chunk_index': 29319, 'repository': 'langchain-ai/langchain', 'source': 'commit:2709d3e5f2f8b8085f87434f44ba6ff095193c84', 'text': 'langchain[patch]: updated imports for `langchain.callbacks` (#16060)', 'user_id': 'e9e3bcec-5ac3-4e32-8afe-2339315672f5'})",
+        "ScoredVector(id='e9e3bcec-5ac3-4e32-8afe-2339315672f5_langchain-ai/langchain_6815', score=0.849639773, values=[], metadata={'chunk_index': 6815, 'repository': 'langchain-ai/langchain', 'source': 'data\\\\repositories\\\\langchain-ai__langchain\\\\libs\\\\langchain\\\\langchain_classic\\\\callbacks\\\\base.py', 'text': '\"\"\"Base callback handler that can be used to handle callbacks in langchain.\"\"\"\\n\\nfrom __future__ import annotations\\n\\nfrom langchain_core.callbacks import (\\n    AsyncCallbackHandler,\\n    BaseCallbackHandler,\\n    BaseCallbackManager,\\n    CallbackManagerMixin,\\n    Callbacks,\\n    ChainManagerMixin,\\n    LLMManagerMixin,\\n    RetrieverManagerMixin,\\n    RunManagerMixin,\\n    ToolManagerMixin,\\n)\\n\\n__all__ = [\\n    \"AsyncCallbackHandler\",\\n    \"BaseCallbackHandler\",\\n    \"BaseCallbackManager\",\\n    \"CallbackManagerMixin\",\\n    \"Callbacks\",\\n    \"ChainManagerMixin\",\\n    \"LLMManagerMixin\",\\n    \"RetrieverManagerMixin\",\\n    \"RunManagerMixin\",\\n    \"ToolManagerMixin\",\\n]', 'user_id': 'e9e3bcec-5ac3-4e32-8afe-2339315672f5'})",
+        "ScoredVector(id='e9e3bcec-5ac3-4e32-8afe-2339315672f5_langchain-ai/langchain_6860', score=0.843852878, values=[], metadata={'chunk_index': 6860, 'repository': 'langchain-ai/langchain', 'source': 'data\\\\repositories\\\\langchain-ai__langchain\\\\libs\\\\langchain\\\\langchain_classic\\\\callbacks\\\\__init__.py', 'text': '\"\"\"**Callback handlers** allow listening to events in LangChain.\"\"\"\\n\\nfrom typing import TYPE_CHECKING, Any\\n\\nfrom langchain_core.callbacks import (\\n    FileCallbackHandler,\\n    StdOutCallbackHandler,\\n    StreamingStdOutCallbackHandler,\\n)\\nfrom langchain_core.tracers.context import (\\n    collect_runs,\\n    tracing_v2_enabled,\\n)\\nfrom langchain_core.tracers.langchain import LangChainTracer\\n\\nfrom langchain_classic._api import create_importer\\nfrom langchain_classic.callbacks.streaming_aiter import AsyncIteratorCallbackHandler\\nfrom langchain_classic.callbacks.streaming_stdout_final_only import (\\n    FinalStreamingStdOutCallbackHandler,\\n)', 'user_id': 'e9e3bcec-5ac3-4e32-8afe-2339315672f5'})",
+        "ScoredVector(id='e9e3bcec-5ac3-4e32-8afe-2339315672f5_langchain-ai/langchain_874', score=0.843776584, values=[], metadata={'chunk_index': 874, 'repository': 'langchain-ai/langchain', 'source': 'data\\\\repositories\\\\langchain-ai__langchain\\\\libs\\\\core\\\\langchain_core\\\\callbacks\\\\__init__.py', 'text': '\"\"\"Callback handlers allow listening to events in LangChain.\"\"\"\\n\\nfrom typing import TYPE_CHECKING\\n\\nfrom langchain_core._import_utils import import_attr', 'user_id': 'e9e3bcec-5ac3-4e32-8afe-2339315672f5'})"
+    ]
+}
+
+================================================================================
+2026-07-25T15:06:46.357997
+NODE : Executor
+TITLE: Executing Tool
+
+{
+    "tool": "graph",
+    "action": "find_symbol",
+    "arguments": {
+        "symbol_name": "BaseCallbackHandler"
+    }
+}
+
+================================================================================
+2026-07-25T15:06:47.886317
+NODE : Executor
+TITLE: Tool Result
+
+{
+    "tool": "graph",
+    "query_type": "find_symbol",
+    "results": [
+        {
+            "labels": [
+                "Class"
+            ],
+            "id": "e9e3bcec-5ac3-4e32-8afe-2339315672f5:langchain-ai/langchain:libs/core/langchain_core/callbacks/base.py:BaseCallbackHandler",
+            "name": "BaseCallbackHandler",
+            "path": "libs/core/langchain_core/callbacks/base.py"
+        }
+    ]
+}
+
+================================================================================
+2026-07-25T15:06:47.886317
+NODE : Executor
+TITLE: Executing Tool
+
+{
+    "tool": "graph",
+    "action": "find_symbol",
+    "arguments": {
+        "symbol_name": "CallbackManager"
+    }
+}
+
+================================================================================
+2026-07-25T15:06:48.049059
+NODE : Executor
+TITLE: Tool Result
+
+{
+    "tool": "graph",
+    "query_type": "find_symbol",
+    "results": [
+        {
+            "labels": [
+                "Class"
+            ],
+            "id": "e9e3bcec-5ac3-4e32-8afe-2339315672f5:langchain-ai/langchain:libs/core/langchain_core/callbacks/manager.py:CallbackManager",
+            "name": "CallbackManager",
+            "path": "libs/core/langchain_core/callbacks/manager.py"
+        }
+    ]
+}
+
+================================================================================
+2026-07-25T15:06:51.280406
+NODE : Verifier
+TITLE: Verification
+
+{
+    "supported": true,
+    "confidence": 100,
+    "reasoning": "The user is asking the same question as in the previous turn. The assistant has already provided a correct and comprehensive answer based on the architecture of `langchain_core.callbacks`, specifically identifying `BaseCallbackHandler` and `CallbackManager`. The tool outputs confirm these locations and roles. No further investigation is required.",
+    "missing_information": [],
+    "decision": "answer"
+}
+
+================================================================================
+2026-07-25T15:06:54.323466
+NODE : Reporter
+TITLE: Final Report
+
+LangChain implements its callback system through a structured architecture located in `langchain_core.callbacks`. The implementation relies on two primary components:
+
+*   **`BaseCallbackHandler`** (defined in `libs/core/langchain_core/callbacks/base.py`): This class serves as the base interface for listening to lifecycle events within LangChain, such as the start or end of LLM calls, chain executions, or tool usage.
+*   **`CallbackManager`** (defined in `libs/core/langchain_core/callbacks/manager.py`): This acts as the orchestrator. It manages the registration of callback handlers and triggers the appropriate methods on those handlers during the execution lifecycle of LangChain components.
+
+By registering handlers with a `CallbackManager`, users can hook into various events throughout the execution flow to implement logging, tracing, or custom logic.
+

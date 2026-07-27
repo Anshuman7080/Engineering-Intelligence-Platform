@@ -2,6 +2,7 @@ from fastapi import FastAPI
 
 from app.core.settings import settings
 from app.core.logger import logger
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.routes.health import router as health_router
 from app.api.routes.ingestion import router as ingestion_router
@@ -29,6 +30,18 @@ app = FastAPI(
 
 logger.info("Application started")
 
+origins = [
+    "http://localhost:5173",   
+    "http://127.0.0.1:5173",   
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,        
+    allow_credentials=True,
+    allow_methods=["*"],           
+    allow_headers=["*"],           
+)
 
 
 app.include_router(

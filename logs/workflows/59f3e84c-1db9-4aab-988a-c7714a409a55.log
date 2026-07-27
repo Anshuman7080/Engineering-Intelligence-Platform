@@ -1,0 +1,115 @@
+================================================================================
+2026-07-25T15:10:11.268548
+NODE : Planner
+TITLE: Execution Plan
+
+{
+    "reasoning": "To explain what RunnableSequence does, I need to find its definition and understand its role within the LangChain expression language (LCEL).",
+    "steps": [
+        {
+            "tool": "graph",
+            "action": "find_symbol",
+            "arguments": {
+                "symbol_name": "RunnableSequence"
+            }
+        },
+        {
+            "tool": "vector",
+            "action": "semantic_search",
+            "arguments": {
+                "query": "What is the purpose and implementation of RunnableSequence in LangChain?"
+            }
+        }
+    ]
+}
+
+================================================================================
+2026-07-25T15:10:11.270548
+NODE : Executor
+TITLE: Executing Tool
+
+{
+    "tool": "graph",
+    "action": "find_symbol",
+    "arguments": {
+        "symbol_name": "RunnableSequence"
+    }
+}
+
+================================================================================
+2026-07-25T15:10:12.360264
+NODE : Executor
+TITLE: Tool Result
+
+{
+    "tool": "graph",
+    "query_type": "find_symbol",
+    "results": [
+        {
+            "labels": [
+                "Class"
+            ],
+            "id": "e9e3bcec-5ac3-4e32-8afe-2339315672f5:langchain-ai/langchain:libs/core/langchain_core/runnables/base.py:RunnableSequence",
+            "name": "RunnableSequence",
+            "path": "libs/core/langchain_core/runnables/base.py"
+        }
+    ]
+}
+
+================================================================================
+2026-07-25T15:10:12.360264
+NODE : Executor
+TITLE: Executing Tool
+
+{
+    "tool": "vector",
+    "action": "semantic_search",
+    "arguments": {
+        "query": "What is the purpose and implementation of RunnableSequence in LangChain?"
+    }
+}
+
+================================================================================
+2026-07-25T15:10:13.977389
+NODE : Executor
+TITLE: Tool Result
+
+{
+    "tool": "vector",
+    "query_type": "semantic_search",
+    "results": [
+        "ScoredVector(id='e9e3bcec-5ac3-4e32-8afe-2339315672f5_langchain-ai/langchain_26821', score=0.893047333, values=[], metadata={'chunk_index': 26821, 'repository': 'langchain-ai/langchain', 'source': 'commit:0923136851f27a8a7db597b5c6340abc649e3198', 'text': 'langchain: default to Runnable in MultiQueryRetriever (#21770)', 'user_id': 'e9e3bcec-5ac3-4e32-8afe-2339315672f5'})",
+        "ScoredVector(id='e9e3bcec-5ac3-4e32-8afe-2339315672f5_langchain-ai/langchain_2399', score=0.876281738, values=[], metadata={'chunk_index': 2399, 'repository': 'langchain-ai/langchain', 'source': 'data\\\\repositories\\\\langchain-ai__langchain\\\\libs\\\\core\\\\langchain_core\\\\runnables\\\\base.py', 'text': '_RUNNABLE_SEQUENCE_MIN_STEPS = 2\\n\\n\\nclass RunnableSequence(RunnableSerializable[Input, Output]):\\n    \"\"\"Sequence of `Runnable` objects, where the output of one is the input of the next.\\n\\n    **`RunnableSequence`** is the most important composition operator in LangChain\\n    as it is used in virtually every chain.\\n\\n    A `RunnableSequence` can be instantiated directly or more commonly by using the\\n    `|` operator where either the left or right operands (or both) must be a\\n    `Runnable`.\\n\\n    Any `RunnableSequence` automatically supports sync, async, batch.\\n\\n    The default implementations of `batch` and `abatch` utilize threadpools and\\n    asyncio gather and will be faster than naive invocation of `invoke` or `ainvoke`\\n    for IO bound `Runnable`s.\\n\\n    Batching is implemented by invoking the batch method on each component of the\\n    `RunnableSequence` in order.', 'user_id': 'e9e3bcec-5ac3-4e32-8afe-2339315672f5'})",
+        "ScoredVector(id='e9e3bcec-5ac3-4e32-8afe-2339315672f5_langchain-ai/langchain_30463', score=0.860149384, values=[], metadata={'chunk_index': 30463, 'repository': 'langchain-ai/langchain', 'source': 'commit:b0e8cbe0b3f5f3a5b0cfd2a280d1f368a75b48a5', 'text': 'Add RunnableSequence documentation (#13094)', 'user_id': 'e9e3bcec-5ac3-4e32-8afe-2339315672f5'})",
+        "ScoredVector(id='e9e3bcec-5ac3-4e32-8afe-2339315672f5_langchain-ai/langchain_9257', score=0.855396271, values=[], metadata={'chunk_index': 9257, 'repository': 'langchain-ai/langchain', 'source': 'data\\\\repositories\\\\langchain-ai__langchain\\\\libs\\\\langchain\\\\langchain_classic\\\\chains\\\\query_constructor\\\\__init__.py', 'text': 'from langchain_classic.chains.query_constructor.base import (\\n    load_query_constructor_runnable,\\n)\\n\\n__all__ = [\"load_query_constructor_runnable\"]', 'user_id': 'e9e3bcec-5ac3-4e32-8afe-2339315672f5'})",
+        "ScoredVector(id='e9e3bcec-5ac3-4e32-8afe-2339315672f5_langchain-ai/langchain_2401', score=0.848510742, values=[], metadata={'chunk_index': 2401, 'repository': 'langchain-ai/langchain', 'source': 'data\\\\repositories\\\\langchain-ai__langchain\\\\libs\\\\core\\\\langchain_core\\\\runnables\\\\base.py', 'text': \"If you need arbitrary logic and need streaming, you can subclass\\n        Runnable, and implement `transform` for whatever logic you need.\\n\\n    Here is a simple example that uses simple functions to illustrate the use of\\n    `RunnableSequence`:\\n\\n        ```python\\n        from langchain_core.runnables import RunnableLambda\\n\\n\\n        def add_one(x: int) -> int:\\n            return x + 1\\n\\n\\n        def mul_two(x: int) -> int:\\n            return x * 2\\n\\n\\n        runnable_1 = RunnableLambda(add_one)\\n        runnable_2 = RunnableLambda(mul_two)\\n        sequence = runnable_1 | runnable_2\\n        # Or equivalently:\\n        # sequence = RunnableSequence(first=runnable_1, last=runnable_2)\\n        sequence.invoke(1)\\n        await sequence.ainvoke(1)\\n\\n        sequence.batch([1, 2, 3])\\n        await sequence.abatch([1, 2, 3])\\n        ```\\n\\n    Here's an example that uses streams JSON output generated by an LLM:\", 'user_id': 'e9e3bcec-5ac3-4e32-8afe-2339315672f5'})"
+    ]
+}
+
+================================================================================
+2026-07-25T15:10:16.685959
+NODE : Verifier
+TITLE: Verification
+
+{
+    "supported": true,
+    "confidence": 100,
+    "reasoning": "The tool outputs provide the exact definition and purpose of `RunnableSequence` from the source code (`libs/core/langchain_core/runnables/base.py`). It explains that it is a sequence of `Runnable` objects where the output of one is the input of the next, it is the primary composition operator in LangChain (often used via the `|` operator), and it automatically supports sync, async, and batch operations.",
+    "missing_information": [],
+    "decision": "answer"
+}
+
+================================================================================
+2026-07-25T15:10:19.815393
+NODE : Reporter
+TITLE: Final Report
+
+`RunnableSequence` is a core component in LangChain, defined in `libs/core/langchain_core/runnables/base.py`. It represents a sequence of `Runnable` objects where the output of one component serves as the input for the next.
+
+Key characteristics include:
+
+*   **Primary Composition Operator:** It is the most important composition operator in LangChain and is used in virtually every chain.
+*   **Instantiation:** While it can be instantiated directly, it is most commonly created using the `|` operator between `Runnable` objects.
+*   **Execution Support:** Any `RunnableSequence` automatically supports synchronous, asynchronous, and batch operations.
+*   **Performance:** The default implementations for `batch` and `abatch` utilize threadpools and `asyncio.gather`, making them more efficient than naive invocations for IO-bound tasks. Batching is performed by invoking the `batch` method on each component of the sequence in order.
+

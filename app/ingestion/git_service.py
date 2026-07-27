@@ -16,11 +16,12 @@ class GitService:
         try:
             logger.info(f"Cloning repository: {repository_url}")
 
-            Repo.clone_from(repository_url, destination_path)
 
-            logger.info("Repository cloned successfully.")
-
-            return destination_path
+            repo=Repo.clone_from(repository_url, destination_path)
+            try:
+                return destination_path
+            finally:
+                repo.close()
 
         except GitCommandError as e:
             logger.error(f"Failed to clone repository: {e}")

@@ -2,6 +2,10 @@ import shutil
 from pathlib import Path
 
 from app.core.logger import logger
+import os
+import stat
+import gc
+import time
 from app.core.settings import settings
 
 from app.graph.graph_service import GraphService
@@ -87,6 +91,9 @@ class RepositoryCleanupService:
 
             raise
 
+    def _remove_readonly(self, func, path, excinfo):
+        os.chmod(path, stat.S_IWRITE)
+        func(path) 
     def _delete_repository_folder(
         self,
         repository_name: str,
@@ -98,7 +105,15 @@ class RepositoryCleanupService:
 
         if repository_path.exists():
 
-            shutil.rmtree(repository_path)
+            gc.collect()
+            time.sleep(2)
+
+            shutil.rmtree(
+                repository_path,
+                onexc=self._remove_readonly,
+            )
+
+            # shutil.rmtree(repository_path)
 
             logger.info(
                 f"Deleted folder: {repository_path}"
