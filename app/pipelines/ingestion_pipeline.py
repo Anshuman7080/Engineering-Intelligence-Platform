@@ -61,6 +61,7 @@ class IngestionPipeline:
         chunks = self.chunker.split_documents(
             documents
         )
+        print("length of chunks is",len(chunks))
 
         embeddings = self.embedding_service.embed_documents(
             chunks

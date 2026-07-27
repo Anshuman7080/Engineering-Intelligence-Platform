@@ -83,11 +83,14 @@ class IngestionService:
         user_id: str,
         repository_name: str,
     ):
+        try:
+            self.pinecone_service.delete_repository_vectors(
+                user_id=user_id,
+                repository_name=repository_name,
+            )
+        except Exception as e:
+            print(f"No vectors present or rollback failed: {e}")
 
-        self.pinecone_service.delete_repository_vectors(
-            user_id=user_id,
-            repository_name=repository_name,
-        )
 
     def rollback_graph(
         self,
